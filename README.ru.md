@@ -2,48 +2,70 @@
   <a href="README.md">🇬🇧 English</a>
 </div>
 
-<h1 align="center">👋 Привет, я m4rkellkka!</h1>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=180&section=header&text=m4rkellkka&fontSize=48&fontColor=fff&animation=twinkling&fontAlignY=36&desc=Full%20Stack%20Developer%20%7C%20QA%20Engineer%20in%20Progress&descSize=16&descAlignY=58" alt="header" />
 
-Добро пожаловать в мой GitHub профиль! Я разработчик, которому интересно изучать самые разные технологии и создавать классные проекты.
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&pause=1000&color=F75C7E&center=true&vCenter=true&width=520&lines=Full+Stack+Developer;Изучаю+QA+Engineering;Всегда+учусь+чему-то+новому" alt="Typing SVG" />
+</p>
+
+<p align="center">
+  <img src="https://komarev.com/ghpvc/?username=m4rkellkka&style=flat-square&color=blueviolet" alt="Просмотры профиля" />
+</p>
+
+---
 
 ## 👨‍💻 Обо мне
 
-- 🎓 Студент **Topkapi University**.
-- 💼 Работаю **Full Stack разработчиком** в компании **International plus**.
-- 💡 Занимаюсь всем, что привлекает мое внимание, и не боюсь экспериментировать с новыми идеями.
-- 🎯 В данный момент активно изучаю и погружаюсь в **QA Engineering**, чтобы улучшить качество разрабатываемых продуктов.
+- 🎓 Студент **Topkapi University**
+- 💼 **Full Stack разработчик** в компании **International plus**
+- 💡 Занимаюсь всем, что привлекает моё внимание, и не боюсь экспериментировать
+- 🎯 Активно погружаюсь в **QA Engineering**, чтобы улучшать качество продуктов
+- 🔧 Основной инструмент: **VS Code**
 
-## 🛠 Технологии и Инструменты
+---
 
-В основном я использую следующие технологии, но всегда готов изучать что-то новое:
+## 🛠 Технологии и инструменты
 
-<p align="left">
-  <!-- Python -->
+<p align="center">
   <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
-  <!-- Java -->
   <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java" />
-  <!-- C++ -->
   <img src="https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white" alt="C++" />
+  <img src="https://img.shields.io/badge/VS%20Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white" alt="VS Code" />
 </p>
 
-- **IDE & Инструменты:** Предпочитаю использовать **Antigravity IDE** для написания кода и работы над проектами.
+---
 
-## 🚀 Мои проекты
+## 🚀 Проекты
 
-Здесь пара проектов, которыми я хотел бы поделиться:
+| | Проект | Описание |
+|--|--------|----------|
+| 🐍 | **[SnakeAI_Project](https://github.com/m4rkellkka/SnakeAI_Project)** | ИИ, который учится играть в «Змейку» с помощью машинного обучения |
+| 💣 | **[Minesweeper_FX](https://github.com/m4rkellkka/Minesweeper_FX)** | Классический «Сапёр», реализованный на JavaFX |
 
-* 🐍 **[SnakeAI_Project](https://github.com/m4rkellkka/SnakeAI_Project)** — Проект по обучению искусственного интеллекта игре в классическую "Змейку" с использованием алгоритмов машинного обучения.
-* 💣 **[Minesweeper / Сапёр](#)** — *(Здесь пока нужна ссылка на репозиторий)* Классическая игра "Сапёр", реализованная мной.
+---
 
-## 📈 Немного статистики
+## 📊 Топ языков
 
-<p align="left">
-  <img src="https://github-readme-stats.vercel.app/api?username=m4rkellkka&show_icons=true&theme=radical" alt="m4rkellkka's GitHub stats" />
+<p align="center">
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=m4rkellkka&layout=compact&theme=radical&hide_border=true" alt="Топ языков" />
 </p>
 
-<!-- 
-## 📫 Как со мной связаться
-Раскомментируй и заполни этот блок в будущем, если захочешь оставить контакты!
-- ✉️ Email: [твой_email@example.com](mailto:твой_email@example.com)
-- 💬 Telegram: [@твой_ник](https://t.me/твой_ник)
--->
+---
+
+## 📈 Активность
+
+<p align="center">
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=m4rkellkka&theme=react-dark&hide_border=true&area=true" alt="Граф активности" />
+</p>
+
+---
+
+## 📫 Связаться со мной
+
+<p align="center">
+  <a href="mailto:savushkinwork@gmail.com">
+    <img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" />
+  </a>
+</p>
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer" alt="footer" />
