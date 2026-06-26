@@ -2,10 +2,10 @@
   <a href="README.ru.md">🇷🇺 Русский</a>
 </div>
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=180&section=header&text=m4rkellkka&fontSize=48&fontColor=fff&animation=twinkling&fontAlignY=36&desc=Full%20Stack%20Developer%20%7C%20QA%20Engineer%20in%20Progress&descSize=16&descAlignY=58" alt="header" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=180&section=header&text=m4rkellkka&fontSize=48&fontColor=fff&animation=twinkling&fontAlignY=36&desc=Backend%20Automation%20Engineer%20%7C%20QA%20Engineer%20in%20Progress&descSize=16&descAlignY=58" alt="header" />
 
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&pause=1000&color=F75C7E&center=true&vCenter=true&width=520&lines=Full+Stack+Developer;QA+Engineering+Enthusiast;Always+Learning+Something+New" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&pause=1000&color=F75C7E&center=true&vCenter=true&width=520&lines=Backend+Automation+Engineer;QA+Engineering+Enthusiast;Always+Learning+Something+New" alt="Typing SVG" />
 </p>
 
 <p align="center">
