@@ -1,0 +1,61 @@
+name: profile
+
+on:
+  schedule:
+    - cron: "0 4 * * *" # 07:00 Istanbul
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - scripts/build_profile.py
+      - scripts/profile/**
+      - requirements.txt
+      - .github/workflows/profile.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: profile
+  cancel-in-progress: false
+
+jobs:
+  cards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python scripts/build_profile.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit if the rendered profile changed
+        run: |
+          if [ -z "$(git status --porcelain assets/profile)" ]; then
+            echo "Profile is up to date"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/profile
+          git commit -m "chore(profile): refresh live data"
+          git push
+
+  snake:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Platane/snk/svg-only@v3
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            dist/snake.svg?palette=github-light&color_snake=#f0642f&color_dots=#ebedf0,#fbd3c2,#f7a17f,#f27a4c,#c94e22
+            dist/snake-dark.svg?palette=github-dark&color_snake=#f0642f&color_dots=#161b22,#4a2414,#8a3818,#c94e22,#f0642f
+      - uses: crazy-max/ghaction-github-pages@v5
+        with:
+          target_branch: output
+          build_dir: dist
+          jekyll: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
