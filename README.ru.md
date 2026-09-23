@@ -2,7 +2,7 @@
 
 <img src="assets/profile/hero.ru.svg" width="100%" alt="Михаил Савушкин — интегратор AI-решений. Пайплайн: чат → webhook → LLM → инсайт." />
 
-Строю backend-системы, которые подключают AI к реальным процессам: LLM-интеграции, webhooks и автоматизацию, которая снимает с людей ручную работу. Data-first подход — из года работы Data Scientist в **Yandex**. Сейчас я Backend Engineer (AI & Automation) в **International Plus** в Стамбуле и учусь на компьютерного инженера в **Istanbul Topkapı University**.
+<img src="assets/profile/about.ru.svg" width="100%" alt="Обо мне: backend-системы, которые подключают AI к реальным процессам. Путь: Yandex (Data Scientist, 2022) → Topkapı University (2023) → International Plus (2025) → Backend Engineer, AI (2026, сейчас)." />
 
 <img src="assets/profile/stack.ru.svg" width="100%" alt="Стек. Данные: Python, Pandas, SQL, Seaborn, Jupyter. Backend: Node.js, TypeScript, REST API, Webhooks, AWS. AI: LLM API, AI-агенты, локальные LLM, ML-инструменты." />
 
@@ -13,17 +13,15 @@
   <a href="https://github.com/m4rkellkka/clinic-retention-analysis"><img src="assets/profile/card-clinic.ru.svg" width="49.5%" alt="Clinic Retention — анализ неявок пациентов" /></a>
 </p>
 
-<sub>Ещё на GitHub: <a href="https://github.com/m4rkellkka/Minesweeper_FX">Minesweeper_FX</a> (JavaFX) · <a href="https://github.com/m4rkellkka/priority-encoder-8to3">priority-encoder-8to3</a> (Verilog)</sub>
-
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/m4rkellkka/m4rkellkka/output/snake-dark.svg" />
   <img src="https://raw.githubusercontent.com/m4rkellkka/m4rkellkka/output/snake.svg" width="100%" alt="Змейка ест мой граф контрибьюшенов" />
 </picture>
 
-<p align="center">
-  <a href="https://m4rkellkka.github.io/m4rkellkka/"><b>Резюме</b></a> ·
-  <a href="https://linkedin.com/in/mikhail-savushkin-993a33408"><b>LinkedIn</b></a> ·
-  <a href="mailto:savushkinwork@gmail.com"><b>savushkinwork@gmail.com</b></a>
-</p>
+<img src="assets/profile/contact.ru.svg" width="100%" alt="Давайте строить системы, которые убирают работу, а не добавляют её." />
 
-<p align="center"><sub>Профиль пересобирается сам каждое утро: <a href=".github/workflows/profile.yml">profile.yml</a> → <a href="scripts/build_profile.py">build_profile.py</a></sub></p>
+<p align="center">
+  <a href="https://m4rkellkka.github.io/m4rkellkka/"><img src="assets/profile/button-resume.ru.svg" height="46" alt="Резюме" /></a>
+  <a href="https://linkedin.com/in/mikhail-savushkin-993a33408"><img src="assets/profile/button-linkedin.ru.svg" height="46" alt="LinkedIn" /></a>
+  <a href="mailto:savushkinwork@gmail.com"><img src="assets/profile/button-email.ru.svg" height="46" alt="Email" /></a>
+</p>

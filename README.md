@@ -2,7 +2,7 @@
 
 <img src="assets/profile/hero.en.svg" width="100%" alt="Mikhail Savushkin — AI Solutions Integrator. Pipeline: chat → webhook → LLM → insight." />
 
-I build backend systems that connect AI to real operations: LLM integrations, webhooks and automation that take manual work off people. The data-first habit comes from a year as a Data Scientist at **Yandex**. Today I'm a Backend Engineer (AI & Automation) at **International Plus** in Istanbul and study Computer Engineering at **Istanbul Topkapı University**.
+<img src="assets/profile/about.en.svg" width="100%" alt="About: backend systems that connect AI to real operations. Path: Yandex (Data Scientist, 2022) → Topkapı University (2023) → International Plus (2025) → Backend Engineer, AI (2026, now)." />
 
 <img src="assets/profile/stack.en.svg" width="100%" alt="Stack. Data: Python, Pandas, SQL, Seaborn, Jupyter. Backend: Node.js, TypeScript, REST APIs, Webhooks, AWS. AI: LLM APIs, AI agents, local LLMs, ML tooling." />
 
@@ -13,17 +13,15 @@ I build backend systems that connect AI to real operations: LLM integrations, we
   <a href="https://github.com/m4rkellkka/clinic-retention-analysis"><img src="assets/profile/card-clinic.en.svg" width="49.5%" alt="Clinic Retention — EDA of patient no-shows" /></a>
 </p>
 
-<sub>Also on GitHub: <a href="https://github.com/m4rkellkka/Minesweeper_FX">Minesweeper_FX</a> (JavaFX) · <a href="https://github.com/m4rkellkka/priority-encoder-8to3">priority-encoder-8to3</a> (Verilog)</sub>
-
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/m4rkellkka/m4rkellkka/output/snake-dark.svg" />
   <img src="https://raw.githubusercontent.com/m4rkellkka/m4rkellkka/output/snake.svg" width="100%" alt="A snake eating my contribution graph" />
 </picture>
 
-<p align="center">
-  <a href="https://m4rkellkka.github.io/m4rkellkka/"><b>Resume</b></a> ·
-  <a href="https://linkedin.com/in/mikhail-savushkin-993a33408"><b>LinkedIn</b></a> ·
-  <a href="mailto:savushkinwork@gmail.com"><b>savushkinwork@gmail.com</b></a>
-</p>
+<img src="assets/profile/contact.en.svg" width="100%" alt="Let's build something that removes work, not adds it." />
 
-<p align="center"><sub>This profile rebuilds itself every morning: <a href=".github/workflows/profile.yml">profile.yml</a> → <a href="scripts/build_profile.py">build_profile.py</a></sub></p>
+<p align="center">
+  <a href="https://m4rkellkka.github.io/m4rkellkka/"><img src="assets/profile/button-resume.en.svg" height="46" alt="Resume" /></a>
+  <a href="https://linkedin.com/in/mikhail-savushkin-993a33408"><img src="assets/profile/button-linkedin.en.svg" height="46" alt="LinkedIn" /></a>
+  <a href="mailto:savushkinwork@gmail.com"><img src="assets/profile/button-email.en.svg" height="46" alt="Email" /></a>
+</p>

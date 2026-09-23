@@ -52,6 +52,19 @@ CONTENT = {
         "also": "also: Java · C++ · Verilog · Tauri · Next.js · Tkinter",
         "pushed": "pushed",
         "private": "private",
+        "about_label": "// ABOUT",
+        "about": "I build backend systems that connect AI to real operations: LLM integrations, webhooks and automation that take manual work off people. The data-first habit comes from a year as a Data Scientist at Yandex.",
+        "timeline": [
+            ("SEP 2022", "Yandex", "Data Scientist · Moscow"),
+            ("OCT 2023", "Topkapı University", "B.Eng. Computer Engineering"),
+            ("DEC 2025", "International Plus", "Medical Advisor · CRM"),
+            ("MAY 2026", "International Plus", "Backend Engineer · AI"),
+        ],
+        "now": "NOW",
+        "contact_label": "// CONTACT",
+        "contact_title": "Let's build something that removes work, not adds it.",
+        "contact_note": "this profile rebuilds itself every morning · profile.yml → build_profile.py",
+        "buttons": {"resume": "Resume", "linkedin": "LinkedIn", "email": "Email"},
     },
     "ru": {
         "location": "СТАМБУЛ, ТУРЦИЯ",
@@ -76,6 +89,19 @@ CONTENT = {
         "also": "ещё: Java · C++ · Verilog · Tauri · Next.js · Tkinter",
         "pushed": "пуш",
         "private": "private",
+        "about_label": "// ОБО МНЕ",
+        "about": "Строю backend-системы, которые подключают AI к реальным процессам: LLM-интеграции, webhooks и автоматизацию, которая снимает с людей ручную работу. Data-first подход — из года работы Data Scientist в Yandex.",
+        "timeline": [
+            ("СЕН 2022", "Yandex", "Data Scientist · Москва"),
+            ("ОКТ 2023", "Topkapı University", "Компьютерная инженерия"),
+            ("ДЕК 2025", "International Plus", "Medical Advisor · CRM"),
+            ("МАЙ 2026", "International Plus", "Backend Engineer · AI"),
+        ],
+        "now": "СЕЙЧАС",
+        "contact_label": "// КОНТАКТЫ",
+        "contact_title": "Давайте строить системы, которые убирают работу, а не добавляют её.",
+        "contact_note": "профиль пересобирается сам каждое утро · profile.yml → build_profile.py",
+        "buttons": {"resume": "Резюме", "linkedin": "LinkedIn", "email": "Email"},
     },
 }
 
@@ -514,6 +540,78 @@ def card(project, index, lang, live):
     return svg
 
 
+def about(lang):
+    t = CONTENT[lang]
+    pad, right = 64, 1136
+    lines = wrap(BODY, t["about"], 22, right - pad, 3)
+    line_y = 104 + (len(lines) - 1) * 32 + 80
+    svg = Svg(1200, line_y + 104, t["about"])
+    backdrop(svg, 18)
+    section_label(svg, pad, 56, t["about_label"], right)
+    for i, line in enumerate(lines):
+        svg.text(pad, 104 + i * 32, line, BODY, 22, C["ink"])
+
+    # Career drawn like the hero pipeline: orange behind, teal for where I am now.
+    stops = t["timeline"]
+    col_w = (right - pad) / len(stops)
+    xs = [pad + 6 + i * col_w for i in range(len(stops))]
+    svg.defs.append(
+        el(
+            "linearGradient",
+            el("stop", offset=0, stop_color=C["primary"]) + el("stop", offset=1, stop_color=C["teal"]),
+            id="path", gradientUnits="userSpaceOnUse", x1=num(xs[0]), y1=0, x2=num(xs[-1]), y2=0,
+        )
+    )
+    svg.add(
+        el("path", d=f"M{num(xs[0])} {line_y}H{num(xs[-1])}", stroke="url(#path)", stroke_width=2),
+        el("path", d=f"M{num(xs[-1])} {line_y}H{right}", stroke=C["teal"], stroke_opacity=0.5, stroke_dasharray="3 6"),
+    )
+    for i, (x, (date, org, role)) in enumerate(zip(xs, stops)):
+        current = i == len(stops) - 1
+        color = C["teal"] if current else C["primary"]
+        svg.text(num(x - 6), line_y - 22, date, MONO_MD, 14, color, letter_spacing=1.5)
+        if current:
+            pill_x = x - 6 + MONO_MD.width(date, 14, 1.5) + 10
+            pill_w = MONO_MD.width(t["now"], 11.5, 1.5) + 18
+            svg.add(
+                el("rect", x=num(pill_x), y=line_y - 40, width=num(pill_w), height=24, rx=12, fill=C["teal"], fill_opacity=0.14, stroke=C["teal"], stroke_opacity=0.5),
+                el("circle", cx=num(x), cy=line_y, r=13, fill=C["teal"], opacity=0.16),
+            )
+            svg.text(num(pill_x + 9), line_y - 24, t["now"], MONO_MD, 11.5, C["teal"], letter_spacing=1.5)
+        svg.add(el("circle", cx=num(x), cy=line_y, r=6, fill=C["teal"] if current else C["bg"], stroke=color, stroke_width=2))
+        svg.text(num(x - 6), line_y + 40, org, DISPLAY, num(fit(DISPLAY, org, 17, col_w - 28)), C["ink_strong"])
+        svg.text(num(x - 6), line_y + 66, role, MONO, 13.5, C["muted_soft"])
+    return svg
+
+
+def contact(lang):
+    t = CONTENT[lang]
+    pad, right = 64, 1136
+    lines = wrap(DISPLAY, t["contact_title"], 28, right - pad, 2)
+    note_y = 110 + (len(lines) - 1) * 42 + 50
+    svg = Svg(1200, note_y + 44, t["contact_title"])
+    backdrop(svg, 18, glow=(0.1, 1.0, 0.75))
+    section_label(svg, pad, 56, t["contact_label"], right)
+    for i, line in enumerate(lines):
+        svg.text(pad, 110 + i * 42, line, DISPLAY, 28, C["ink_strong"])
+    svg.text(pad, note_y, t["contact_note"], MONO, 14, C["muted_soft"])
+    return svg
+
+
+def button(label, primary):
+    """One linkable pill: README images can carry only one link each, so every button is its own SVG."""
+    size, h = 17, 56
+    text_w = MONO_MD.width(label, size)
+    w = 24 + text_w + 14 + 12 + 24
+    ink = C["bg"] if primary else C["ink_strong"]
+    svg = Svg(num(w), h, label)
+    svg.add(el("rect", x=0.5, y=0.5, width=num(w - 1), height=h - 1, rx=12, fill=C["primary"] if primary else C["surface"], stroke=None if primary else LINE_STRONG))
+    svg.text(24, num(h / 2 + size * 0.36), label, MONO_MD, size, ink)
+    ax, ay = 24 + text_w + 14, h / 2 - 6
+    svg.add(el("path", d=f"M{num(ax)} {num(ay + 12)}L{num(ax + 12)} {num(ay)}M{num(ax + 3)} {num(ay)}H{num(ax + 12)}V{num(ay + 9)}", fill="none", stroke=ink, stroke_width=2, stroke_linecap="round", stroke_linejoin="round"))
+    return svg
+
+
 def fetch_live():
     headers = {"Accept": "application/vnd.github+json", "User-Agent": f"{USER}-profile-builder"}
     if os.environ.get("GITHUB_TOKEN"):
@@ -545,9 +643,13 @@ def main():
     outputs = {}
     for lang in LANGS:
         outputs[f"hero.{lang}.svg"] = hero(lang, live)
+        outputs[f"about.{lang}.svg"] = about(lang)
         outputs[f"stack.{lang}.svg"] = stack(lang)
         for index, project in enumerate(PROJECTS, start=1):
             outputs[f"card-{project['slug']}.{lang}.svg"] = card(project, index, lang, live)
+        outputs[f"contact.{lang}.svg"] = contact(lang)
+        for key, label in CONTENT[lang]["buttons"].items():
+            outputs[f"button-{key}.{lang}.svg"] = button(label, primary=key == "resume")
     for name, svg in outputs.items():
         path = OUT / name
         path.write_text(svg.render())
