@@ -349,6 +349,12 @@ def backdrop(svg, radius, glow=None, noise=True):
     svg.add(el("rect", x=0.5, y=0.5, width=w - 1, height=h - 1, rx=radius - 0.5, fill="none", stroke=LINE_STRONG))
 
 
+def day_first(iso_date):
+    """2026-09-10 -> 10.09.2026; live.json keeps ISO, only the rendered text flips."""
+    year, month, day = iso_date.split("-")
+    return f"{day}.{month}.{year}"
+
+
 def fit(face, text, size, max_width, spacing=0.0):
     width = face.width(text, size, spacing)
     return size if width <= max_width else size * max_width / width
@@ -420,7 +426,7 @@ def hero(lang, live):
     svg.text(pad, 76, t["location"], MONO, 15, C["muted_soft"], letter_spacing=2.5)
     latest = live["latest"]
     title = next((p["title"] for p in PROJECTS if p["repo"] == latest["name"]), latest["name"])
-    status = [(f"{t['status']} → ", C["muted"]), (title, C["ink_strong"]), (f" · {latest['pushed']}", C["muted"])]
+    status = [(f"{t['status']} → ", C["muted"]), (title, C["ink_strong"]), (f" · {day_first(latest['pushed'])}", C["muted"])]
     status_width = sum(MONO.width(part, 15) for part, _ in status)
     pill_x = right - status_width - 52
     svg.add(
@@ -532,7 +538,7 @@ def card(project, index, lang, live):
             sx = pad + 20 + MONO.width(language, 14) + 24
             svg.add(el("polygon", points=star(sx + 7, base - 5, 8), fill=C["amber"]))
             svg.text(num(sx + 20), base, str(repo["stars"]), MONO, 14, C["muted"])
-        svg.text(w - pad, base, f"{t['pushed']} {repo['pushed']}", MONO, 14, C["muted_soft"], text_anchor="end")
+        svg.text(w - pad, base, f"{t['pushed']} {day_first(repo['pushed'])}", MONO, 14, C["muted_soft"], text_anchor="end")
     else:
         svg.add(el("circle", cx=pad + 6, cy=base - 5, r=6, fill=C["teal"]))
         svg.text(pad + 20, base, t["private"], MONO, 14, C["muted"])

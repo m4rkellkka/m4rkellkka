@@ -8,7 +8,7 @@
 <rect x="778" y="50" width="358" height="38" rx="19" fill="#0e0c09" stroke="rgba(255,255,255,0.16)"/>
 <circle cx="800" cy="69" r="5" fill="#52c6c0" class="ping"/>
 <circle cx="800" cy="69" r="5" fill="#52c6c0"/>
-<text x="814" y="74" class="pf-mono" font-size="15"><tspan fill="#a79e94">последний пуш → </tspan><tspan fill="#fcfaf6">Lumis</tspan><tspan fill="#a79e94"> · 2026-09-10</tspan></text>
+<text x="814" y="74" class="pf-mono" font-size="15"><tspan fill="#a79e94">последний пуш → </tspan><tspan fill="#fcfaf6">Lumis</tspan><tspan fill="#a79e94"> · 10.09.2026</tspan></text>
 <text x="64" y="160" class="pf-display" font-size="62" fill="#fcfaf6">Михаил Савушкин</text>
 <text x="64" y="206" class="pf-mono-md" font-size="19" letter-spacing="1.5"><tspan fill="#e75b26">ИНТЕГРАТОР AI-РЕШЕНИЙ</tspan><tspan fill="#7e7870"> / BACKEND &amp; AUTOMATION</tspan></text>
 <text x="64" y="252" class="pf-body" font-size="23" fill="#ebe5dc">Я не просто пишу код — я строю data-driven системы, которые убирают реальные узкие места.</text>
