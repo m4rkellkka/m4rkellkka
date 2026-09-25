@@ -2,7 +2,9 @@ name: profile
 
 on:
   schedule:
-    - cron: "0 4 * * *" # 07:00 Istanbul
+    # GitHub delays or drops runs scheduled at :00, so use an odd minute plus an evening backup
+    - cron: "17 3 * * *" # 06:17 Istanbul
+    - cron: "17 15 * * *" # 18:17 Istanbul
   workflow_dispatch:
   push:
     branches: [main]
