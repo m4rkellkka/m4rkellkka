@@ -12,6 +12,7 @@ import io
 import json
 import math
 import os
+import urllib.error
 import urllib.request
 from pathlib import Path
 from xml.sax.saxutils import escape
@@ -36,6 +37,7 @@ CONTENT = {
         "role_tail": " / NEXT.JS · REACT · AI",
         "tagline": "I don't just write code — I ship web apps and AI systems that kill real bottlenecks.",
         "status": "latest push",
+        "private_repo": "private project",
         "pipeline_label": "// WHAT I BUILD",
         "pipeline": [
             ("chat", "WhatsApp · CRM"),
@@ -73,6 +75,7 @@ CONTENT = {
         "role_tail": " / NEXT.JS · REACT · AI",
         "tagline": "Я не просто пишу код — я делаю веб-приложения и AI-системы, которые убирают реальные узкие места.",
         "status": "последний пуш",
+        "private_repo": "приватный проект",
         "pipeline_label": "// ЧТО Я СТРОЮ",
         "pipeline": [
             ("чат", "WhatsApp · CRM"),
@@ -110,6 +113,8 @@ PROJECTS = [
     {
         "slug": "tamam",
         "repo": None,
+        # Private repos are matched by id, so their names never appear in this public repo.
+        "repo_id": 1387651029,
         "title": "Tamam",
         "label": {"en": "IN PILOT", "ru": "В ПИЛОТЕ"},
         "desc": {
@@ -122,6 +127,7 @@ PROJECTS = [
     {
         "slug": "cv-screening",
         "repo": None,
+        "repo_id": 1385646223,
         "title": "CV Screening",
         "label": {"en": "MVP DEMO", "ru": "ДЕМО MVP"},
         "desc": {
@@ -427,8 +433,8 @@ def hero(lang, live):
     # Top row: location on the left, live status pill on the right.
     svg.text(pad, 76, t["location"], MONO, 15, C["muted_soft"], letter_spacing=2.5)
     latest = live["latest"]
-    title = next((p["title"] for p in PROJECTS if p["repo"] == latest["name"]), latest["name"])
-    status = [(f"{t['status']} → ", C["muted"]), (title, C["ink_strong"]), (f" · {day_first(latest['pushed'])}", C["muted"])]
+    title = latest["title"] or t["private_repo"]
+    status =[(f"{t['status']} → ", C["muted"]), (title, C["ink_strong"]), (f" · {day_first(latest['pushed'])}", C["muted"])]
     status_width = sum(MONO.width(part, 15) for part, _ in status)
     pill_x = right - status_width - 52
     svg.add(
@@ -621,13 +627,26 @@ def button(label, primary):
 
 
 def fetch_live():
+    # PROFILE_TOKEN (fine-grained, read-only metadata on my repos) lets private pushes count for "latest push".
+    # Without it only public repos are visible: the workflow's GITHUB_TOKEN cannot see other repos.
+    profile_token = os.environ.get("PROFILE_TOKEN")
+    token = profile_token or os.environ.get("GITHUB_TOKEN")
+    if profile_token:
+        url = "https://api.github.com/user/repos?per_page=100&affiliation=owner"
+    else:
+        url = f"https://api.github.com/users/{USER}/repos?per_page=100&type=owner"
     headers = {"Accept": "application/vnd.github+json", "User-Agent": f"{USER}-profile-builder"}
-    if os.environ.get("GITHUB_TOKEN"):
-        headers["Authorization"] = f"Bearer {os.environ['GITHUB_TOKEN']}"
-    request = urllib.request.Request(f"https://api.github.com/users/{USER}/repos?per_page=100&type=owner", headers=headers)
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
     try:
-        with urllib.request.urlopen(request, timeout=20) as response:
+        with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=20) as response:
             repos = json.load(response)
+    except urllib.error.HTTPError as error:
+        if profile_token and error.code == 401:
+            # Fail the run so GitHub emails about it, instead of silently freezing the status.
+            raise SystemExit("PROFILE_TOKEN was rejected, it has probably expired: create a new one and update the secret")
+        print(f"GitHub API unavailable ({error}), using {LIVE.relative_to(ROOT)}")
+        return json.loads(LIVE.read_text())
     except (OSError, ValueError) as error:
         print(f"GitHub API unavailable ({error}), using {LIVE.relative_to(ROOT)}")
         return json.loads(LIVE.read_text())
@@ -635,11 +654,17 @@ def fetch_live():
     # The profile repo itself is left out: every bot commit would change its push date and trigger another commit.
     repos = [r for r in repos if not r["fork"] and r["name"] != USER]
     latest = max(repos, key=lambda r: r["pushed_at"])
+    if latest["private"]:
+        # live.json is public: a private repo is named only by its card title, or not at all.
+        title = next((p["title"] for p in PROJECTS if p.get("repo_id") == latest["id"]), None)
+    else:
+        title = next((p["title"] for p in PROJECTS if p["repo"] == latest["name"]), latest["name"])
     return {
-        "latest": {"name": latest["name"], "pushed": latest["pushed_at"][:10]},
+        "latest": {"title": title, "pushed": latest["pushed_at"][:10]},
         "repos": {
             r["name"]: {"language": r["language"], "stars": r["stargazers_count"], "pushed": r["pushed_at"][:10]}
             for r in sorted(repos, key=lambda r: r["name"].lower())
+            if not r["private"]
         },
     }
 

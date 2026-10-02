@@ -29,53 +29,58 @@ FONT_MONO = ASSETS / "fonts" / "JetBrainsMono-Regular.ttf"
 
 RESUME = {
     "name": "Mikhail Savushkin",
-    "role": "AI Solutions Integrator | Backend & Automation Engineer",
+    "role": "Full-Stack Engineer | Next.js, React & AI",
     "location": "Istanbul, Turkiye",
     "email": "savushkinwork@gmail.com",
     "linkedin": "linkedin.com/in/mikhail-savushkin-993a33408",
     "summary": (
-        "Backend and Automation Engineer with a Data Science background. I build AI-driven systems, "
-        "integrate LLM APIs, and automate routine business processes. One year as a Data Scientist "
-        "at Yandex anchors the work: data pipelines, analytical models, and business-facing systems thinking."
+        "Full-stack engineer with a Data Science background. I build web products and connect them to AI: "
+        "Next.js interfaces that work on a phone, Postgres with real access control, and LLM pipelines that "
+        "take manual work off people. One year as a Data Scientist at Yandex anchors the data-first habit."
     ),
     "proof": [
         "1 year at Yandex - production data work, pipelines, analytical models, and cross-functional delivery.",
-        "Python, Node.js, AWS - backend foundations for APIs, automation, and cloud-connected systems.",
-        "AI agents and automation - LLM workflows connected to real business processes through webhooks and CRMs.",
+        "Next.js, React, Supabase - full-stack apps with phone-first interfaces and row-level security in Postgres.",
+        "AI in real operations - LLM pipelines for sales QA and hiring, connected through webhooks and CRMs.",
     ],
     "systems": [
+        {
+            "title": "Tamam - requests and approvals for a clinic (in pilot)",
+            "bullets": [
+                "Next.js and Supabase app that replaces WhatsApp threads with one queue per role: sellers file requests "
+                "from a phone, managers approve, the coordinator carries them out and exports to Excel.",
+                "5 roles enforced by Postgres row-level security and covered by pgTAP tests; 4 UI languages including Arabic (RTL).",
+                "Stack: Next.js, React, TypeScript, Supabase, Postgres RLS, Vercel.",
+            ],
+        },
+        {
+            "title": "CV screening assistant for HR (MVP demo)",
+            "bullets": [
+                "Reads PDF, DOCX and scanned CVs (OCR), strips personal data before the LLM, and rates every hiring "
+                "criterion with a verbatim quote from the CV.",
+                "The score and ranking are computed in code, not by the model; HR gets interview questions and an Excel export, and makes every decision.",
+                "Stack: Next.js, TypeScript, Claude API, Ollama, Tesseract OCR.",
+            ],
+        },
         {
             "title": "AI reviewer for WhatsApp sales conversations",
             "bullets": [
                 "Connected messaging data to an LLM-backed QA flow that reviews conversations and extracts sales signals.",
                 "Turns unstructured chats into audit-ready feedback for managers and sales quality review.",
-                "Stack: LLM APIs, webhooks, WhatsApp workflows, QA logic.",
-            ],
-        },
-        {
-            "title": "Production data pipelines at Yandex",
-            "bullets": [
-                "Built and maintained cleaning pipelines for large datasets.",
-                "Shaped analytical outputs into signals that business teams could use.",
-                "Stack: Python, Pandas, SQL, data visualization.",
-            ],
-        },
-        {
-            "title": "CRM and sales workflow requirements",
-            "bullets": [
-                "Translated hands-on sales and CRM context into clearer requirements for AI assistants and QA bots.",
-                "Bridged operator workflows with backend and AI system design.",
+                "Stack: LLM APIs, webhooks, Node.js, QA logic.",
             ],
         },
     ],
     "experience": [
         {
-            "role": "Backend Engineer (AI & Automation)",
+            "role": "Full-Stack Engineer (Web & AI)",
             "org": "International Plus / Power International - Istanbul",
             "date": "May 2026 - Present",
             "bullets": [
-                "Architected and implemented an AI-driven QA agent for WhatsApp sales.",
-                "Integrated LLMs with messaging platforms via webhooks to automate sales analysis and reduce manual auditing time.",
+                "Built Tamam, the clinic's request and approval app (Next.js, Supabase), now in pilot with the sales teams.",
+                "Built a CV screening assistant that helps HR shortlist candidates for multilingual sales roles.",
+                "Architected an AI-driven QA agent for WhatsApp sales: LLMs connected via webhooks to automate sales "
+                "analysis and reduce manual auditing time.",
             ],
         },
         {
@@ -99,18 +104,23 @@ RESUME = {
         },
     ],
     "skills": [
-        "Python",
+        "TypeScript",
+        "React",
+        "Next.js",
+        "Tailwind CSS",
         "Node.js",
-        "LLM APIs",
-        "AI agents",
-        "AWS",
-        "Pandas",
-        "SQL",
-        "Data visualization",
-        "Data pipelines",
+        "PostgreSQL",
+        "Supabase",
         "REST APIs",
         "Webhooks",
-        "Workflow automation",
+        "LLM APIs",
+        "AI agents",
+        "Local LLMs",
+        "Python",
+        "Pandas",
+        "SQL",
+        "Vercel",
+        "AWS",
     ],
     "education": "Istanbul Topkapi University - B.Eng., Computer Engineering, Oct 2023 - Aug 2028 (in progress).",
 }
@@ -335,10 +345,12 @@ def build_social_preview():
     body_font = ImageFont.truetype(str(FONT_REGULAR), 26)
     chip_font = ImageFont.truetype(str(FONT_MONO), 18)
 
-    # Status chip
-    draw.rounded_rectangle((70, 98, 380, 146), radius=24, outline="#2a2a2d", fill="#161616")
+    # Status chip, sized to its label
+    status = "Open to full-stack / AI roles"
+    chip_right = 125 + draw.textlength(status, font=chip_font) + 26
+    draw.rounded_rectangle((70, 98, chip_right, 146), radius=24, outline="#2a2a2d", fill="#161616")
     draw.ellipse((94, 116, 106, 128), fill="#f0642f")
-    draw.text((125, 112), "Open to backend / AI roles", font=chip_font, fill="#a0a0a0")
+    draw.text((125, 112), status, font=chip_font, fill="#a0a0a0")
 
     # Typography
     draw.text((70, 195), "Mikhail", font=title_font, fill="#e0e0e0")
@@ -347,7 +359,7 @@ def build_social_preview():
     role_bottom = draw_wrapped(
         draw,
         (72, 385),
-        "AI Solutions Integrator | Backend & Automation Engineer",
+        "Full-Stack Engineer | Next.js, React & AI",
         role_font,
         "#f0642f",
         640,
@@ -356,7 +368,7 @@ def build_social_preview():
     draw_wrapped(
         draw,
         (72, role_bottom + 25),
-        "Backend, automation, and AI integration work grounded in a data science background at Yandex.",
+        "Web products and AI integrations that remove manual work, grounded in a data science background at Yandex.",
         body_font,
         "#a0a0a0",
         650,

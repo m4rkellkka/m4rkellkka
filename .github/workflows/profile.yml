@@ -33,6 +33,8 @@ jobs:
       - run: python scripts/build_profile.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Optional: lets pushes to private repos show up as "latest push" (see fetch_live)
+          PROFILE_TOKEN: ${{ secrets.PROFILE_TOKEN }}
       - name: Commit if the rendered profile changed
         run: |
           if [ -z "$(git status --porcelain assets/profile)" ]; then
