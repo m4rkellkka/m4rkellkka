@@ -1,16 +1,16 @@
 <div align="right"><sub><b>EN</b> · <a href="README.ru.md">RU</a></sub></div>
 
-<img src="assets/profile/hero.en.svg" width="100%" alt="Mikhail Savushkin — AI Solutions Integrator. Pipeline: chat → webhook → LLM → insight." />
+<img src="assets/profile/hero.en.svg" width="100%" alt="Mikhail Savushkin — Full-Stack Engineer, Next.js · React · AI. Pipeline: chat → webhook → LLM → insight." />
 
-<img src="assets/profile/about.en.svg" width="100%" alt="About: backend systems that connect AI to real operations. Path: Yandex (Data Scientist, 2022) → Topkapı University (2023) → International Plus (2025) → Backend Engineer, AI (2026, now)." />
+<img src="assets/profile/about.en.svg" width="100%" alt="About: full-stack web products connected to AI. Path: Yandex (Data Scientist, 2022) → Topkapı University (2023) → International Plus (2025) → Full-Stack Engineer, Web &amp; AI (2026, now)." />
 
-<img src="assets/profile/stack.en.svg" width="100%" alt="Stack. Data: Python, Pandas, SQL, Seaborn, Jupyter. Backend: Node.js, TypeScript, REST APIs, Webhooks, AWS. AI: LLM APIs, AI agents, local LLMs, ML tooling." />
+<img src="assets/profile/stack.en.svg" width="100%" alt="Stack. Frontend: TypeScript, React, Next.js, Tailwind, shadcn/ui. Backend: Node.js, PostgreSQL, Supabase, REST APIs, Webhooks. AI &amp; data: LLM APIs, AI agents, local LLMs, Python, SQL." />
 
 <p>
-  <a href="https://github.com/m4rkellkka/Lumis"><img src="assets/profile/card-lumis.en.svg" width="49.5%" alt="Lumis — local-first AI exam prep app" /></a>
+  <a href="https://m4rkellkka.github.io/m4rkellkka/"><img src="assets/profile/card-tamam.en.svg" width="49.5%" alt="Tamam — request and approval app for a clinic, in pilot" /></a>
+  <a href="https://m4rkellkka.github.io/m4rkellkka/"><img src="assets/profile/card-cv-screening.en.svg" width="49.5%" alt="CV Screening — AI assistant for a clinic's HR team, MVP demo" /></a>
   <a href="https://m4rkellkka.github.io/m4rkellkka/"><img src="assets/profile/card-whatsapp-qa.en.svg" width="49.5%" alt="WhatsApp QA Agent — LLM reviewer for sales chats, in production" /></a>
-  <a href="https://github.com/m4rkellkka/SnakeAI_Project"><img src="assets/profile/card-snake-ai.en.svg" width="49.5%" alt="SnakeAI — CNN agent trained by imitation learning" /></a>
-  <a href="https://github.com/m4rkellkka/clinic-retention-analysis"><img src="assets/profile/card-clinic.en.svg" width="49.5%" alt="Clinic Retention — EDA of patient no-shows" /></a>
+  <a href="https://github.com/m4rkellkka/Lumis"><img src="assets/profile/card-lumis.en.svg" width="49.5%" alt="Lumis — local-first AI exam prep app" /></a>
 </p>
 
 <picture>
