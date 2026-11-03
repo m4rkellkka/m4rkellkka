@@ -1,7 +1,7 @@
 {
   "latest": {
-    "title": "Tamam",
-    "pushed": "2026-11-02"
+    "title": "second-brain-Engram",
+    "pushed": "2026-11-03"
   },
   "repos": {
     "clinic-retention-analysis": {
@@ -23,6 +23,11 @@
       "language": "Verilog",
       "stars": 0,
       "pushed": "2026-05-05"
+    },
+    "second-brain-Engram": {
+      "language": null,
+      "stars": 0,
+      "pushed": "2026-11-03"
     },
     "SnakeAI_Project": {
       "language": "Python",
