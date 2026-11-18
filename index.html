@@ -811,15 +811,23 @@
         touch-action: manipulation;
       }
 
+      @keyframes rise {
+        from { transform: scaleY(0); }
+      }
+
+      @keyframes lightsup {
+        from { opacity: 0; }
+      }
+
       .city-svg .bld {
         transform-box: fill-box;
         transform-origin: bottom;
         transform: scaleY(0);
-        transition: transform 900ms cubic-bezier(0.2, 0.7, 0.2, 1);
       }
 
       .city-svg.grown .bld {
         transform: none;
+        animation: rise 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
       }
 
       .city-svg .front {
@@ -844,11 +852,17 @@
       .city-svg .lights {
         fill: var(--city-window);
         opacity: 0;
-        transition: opacity 800ms ease 900ms;
       }
 
       .city-svg.grown .lights {
         opacity: 1;
+        animation: lightsup 800ms ease 1100ms both;
+      }
+
+      /* After the entrance, drop it: the city never stays flat if an animation didn't run */
+      .city-svg.settled .bld,
+      .city-svg.settled .lights {
+        animation: none;
       }
 
       @keyframes off {
@@ -901,6 +915,139 @@
         .city-svg .on0,
         .city-svg .on1 {
           opacity: 0;
+        }
+      }
+
+      /* Life on the water: the city's ferry and beacon; the ferry also sails along the footer */
+      :root {
+        --ferry-hull: var(--ink);
+        --ferry-deck: oklch(0.99 0.004 85);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --ferry-hull: oklch(0.3 0.03 240);
+          --ferry-deck: oklch(0.92 0.012 80);
+        }
+      }
+
+      @keyframes sail {
+        from { transform: translateX(-90px); }
+        to { transform: translateX(1160px); }
+      }
+
+      @keyframes beacon {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.15; }
+      }
+
+      @keyframes footsail {
+        from { left: -80px; }
+        to { left: 100%; }
+      }
+
+      @keyframes redraw {
+        from { stroke-dashoffset: 1; }
+        to { stroke-dashoffset: 0; }
+      }
+
+      .city-svg .ferry { animation: sail 75s linear infinite; }
+      .city-svg .beacon { animation: beacon 1.6s ease-in-out infinite; }
+
+      .mark:hover .scribble path {
+        animation: redraw 700ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+      }
+
+      .portrait-frame.tilting {
+        transition: transform 120ms ease-out;
+      }
+
+      .foot {
+        position: relative;
+      }
+
+      .foot-sea {
+        position: absolute;
+        top: -22px;
+        left: 0;
+        right: 0;
+        height: 22px;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .foot-ferry {
+        position: absolute;
+        bottom: 0;
+        animation: footsail 90s linear infinite;
+      }
+
+      /* Stack: hover a tool to see where it was used */
+      .tech {
+        border-bottom: 1px dotted var(--line-strong);
+        cursor: default;
+        transition: color 160ms ease, border-color 160ms ease;
+      }
+
+      .tech.hl {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+      }
+
+      .stack-trace {
+        min-height: 1.6em;
+        margin-top: 18px;
+        color: var(--muted);
+        font-size: 0.9375rem;
+      }
+
+      .stack-trace strong {
+        color: var(--ink);
+        font-weight: 400;
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 1.0625rem;
+      }
+
+      .copy {
+        margin-left: 12px;
+        padding: 4px 10px;
+        border: 1px solid var(--line-strong);
+        border-radius: 999px;
+        background: none;
+        color: var(--muted);
+        font: 0.8125rem var(--sans);
+        vertical-align: middle;
+        cursor: pointer;
+      }
+
+      .copy:hover {
+        color: var(--ink);
+        border-color: var(--ink);
+      }
+
+      .copy .c-done,
+      .copy.done .c-idle {
+        display: none;
+      }
+
+      .copy.done .c-done {
+        display: inline;
+        color: var(--accent);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .city-svg .ferry {
+          animation: none;
+          transform: translateX(760px);
+        }
+
+        .foot-sea {
+          display: none;
+        }
+
+        .city-svg .beacon {
+          animation: none;
         }
       }
 
@@ -1371,6 +1518,8 @@
       <section class="wrap section" id="stack" aria-labelledby="stack-title">
         <div class="section-head">
           <h2 id="stack-title"><span lang="en">Stack</span><span lang="ru">Стек</span></h2>
+          <p class="section-note" lang="en">Hover or tap a tool to see where I used it.</p>
+          <p class="section-note" lang="ru">Наведите или нажмите на инструмент, чтобы увидеть, где я его использовал.</p>
         </div>
         <dl class="stack">
           <div>
@@ -1400,6 +1549,7 @@
             <dd>Vercel, AWS, Tauri</dd>
           </div>
         </dl>
+        <p class="stack-trace" id="stack-trace" aria-live="polite"></p>
       </section>
 
       <section class="wrap section contact" id="contact" aria-labelledby="contact-title">
@@ -1408,6 +1558,10 @@
           <span lang="ru">Есть процесс, который съедает время людей? <em class="mark">Напишите мне.</em></span>
         </h2>
         <a class="email" href="mailto:savushkinwork@gmail.com">savushkinwork@gmail.com</a>
+        <button type="button" class="copy" data-copy="savushkinwork@gmail.com">
+          <span class="c-idle"><span lang="en">copy</span><span lang="ru">скопировать</span></span>
+          <span class="c-done"><span lang="en">copied ✓</span><span lang="ru">скопировано ✓</span></span>
+        </button>
         <div class="links">
           <a href="https://linkedin.com/in/mikhail-savushkin-993a33408" target="_blank" rel="noreferrer">LinkedIn</a>
           <a href="assets/mikhail-savushkin-resume.pdf" download="Mikhail-Savushkin-Resume.pdf"
@@ -1419,6 +1573,7 @@
     </main>
 
     <footer class="wrap foot">
+      <div class="foot-sea" id="foot-sea" aria-hidden="true"></div>
       <span lang="en">Mikhail Savushkin, Istanbul · <span class="year">2026</span></span>
       <span lang="ru">Михаил Савушкин, Стамбул · <span class="year">2026</span></span>
       <span lang="en">Set in Literata and Manrope.</span>
@@ -1600,6 +1755,17 @@
         var svg = document.getElementById("city");
         var tip = document.getElementById("city-tip");
         var NS = "http://www.w3.org/2000/svg";
+        // The ferry sails here and along the footer.
+        var ART = (window.ART = {
+          ferry:
+            '<path d="M-6 -1h-18M-8 2h-28" stroke="var(--line-strong)" stroke-linecap="round"/>' +
+            '<path d="M0 -5H48L44 1H5Z" fill="var(--ferry-hull)"/>' +
+            '<rect x="4" y="-11" width="38" height="6" rx="1" fill="var(--ferry-deck)" stroke="var(--line)"/>' +
+            '<rect x="11" y="-16" width="24" height="5" rx="1" fill="var(--ferry-deck)" stroke="var(--line)"/>' +
+            '<rect x="21" y="-23" width="5" height="7" fill="var(--ferry-deck)"/>' +
+            '<rect x="21" y="-24" width="5" height="2.5" fill="#1b1b1b"/>' +
+            '<path d="M8 -9h2v2h-2zM12 -9h2v2h-2zM16 -9h2v2h-2zM20 -9h2v2h-2zM24 -9h2v2h-2zM28 -9h2v2h-2zM32 -9h2v2h-2zM36 -9h2v2h-2zM14 -14h2v2h-2zM18 -14h2v2h-2zM22 -14h2v2h-2zM26 -14h2v2h-2zM30 -14h2v2h-2z" fill="var(--city-window)"/>'
+        });
         var STEP = 20, BW = 14, DEPTH = 6, BASE = 200, TALL = 168;
 
         function node(tag, attrs, parent) {
@@ -1649,7 +1815,7 @@
             var share = total / peak;
             var h = total ? 12 + Math.pow(share, 0.7) * TALL : 3;
             var x = w * STEP, y = BASE - h;
-            var g = node("g", { class: "bld", style: "transition-delay:" + w * 18 + "ms" }, svg);
+            var g = node("g", { class: "bld", style: "animation-delay:" + w * 18 + "ms" }, svg);
             node("polygon", { points: [x + BW, y, x + BW + DEPTH, y - 4, x + BW + DEPTH, BASE - 4, x + BW, BASE].join(" "), fill: "var(--city-side)" }, g);
             node("polygon", { points: [x, y, x + DEPTH, y - 4, x + BW + DEPTH, y - 4, x + BW, y].join(" "), fill: "var(--city-roof)" }, g);
             node("rect", { class: "front", x: x, y: y, width: BW, height: h }, g);
@@ -1672,6 +1838,17 @@
           });
           svg.appendChild(reflection);
           node("path", { d: "M0 " + BASE + "H" + width, stroke: "var(--line-strong)", fill: "none" }, svg);
+
+          // This week's building wears a blinking antenna; a ferry crosses the water.
+          var last = buildings[buildings.length - 1];
+          var ax = last.x + BW / 2 + 3, ay = last.y - 4;
+          svg.insertAdjacentHTML(
+            "beforeend",
+            '<path d="M' + ax + " " + ay + "V" + (ay - 11) + '" stroke="var(--city-roof)" stroke-width="1.2"/>' +
+              '<circle class="beacon" cx="' + ax + '" cy="' + (ay - 12) + '" r="5" fill="#ff5a4f" fill-opacity="0.2"/>' +
+              '<circle class="beacon" cx="' + ax + '" cy="' + (ay - 12) + '" r="2" fill="#ff5a4f"/>' +
+              '<g class="ferry"><g transform="translate(0 ' + (BASE + 26) + ')">' + ART.ferry + "</g></g>"
+          );
 
           // Hover / tap: the building lights up and a note says which week it is.
           var active = null;
@@ -1708,11 +1885,18 @@
           });
 
           section.hidden = false;
-          if (!("IntersectionObserver" in window)) return svg.classList.add("grown");
+          function grow() {
+            svg.classList.add("grown");
+            setTimeout(function () {
+              svg.classList.add("settled");
+            }, 2500);
+          }
+          var box = svg.getBoundingClientRect();
+          if (!("IntersectionObserver" in window) || (box.top < window.innerHeight && box.bottom > 0)) return grow();
           var seen = new IntersectionObserver(function (entries) {
             if (!entries[0].isIntersecting) return;
             seen.disconnect();
-            svg.classList.add("grown");
+            grow();
           }, { threshold: 0.3 });
           seen.observe(svg);
         }
@@ -1725,6 +1909,119 @@
           .catch(function () {
             section.hidden = true; // no data: the page simply goes on without the city
           });
+      })();
+    </script>
+    <script>
+      // Small things across the page: a tilting photo, where-did-I-use-it for the stack,
+      // copy the email, a ferry along the footer.
+      (function () {
+        var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var ru = function () {
+          return document.documentElement.dataset.lang === "ru";
+        };
+
+        // The photo print leans towards the cursor.
+        var portrait = document.querySelector(".portrait");
+        var frame = portrait && portrait.querySelector(".portrait-frame");
+        if (frame && !reduce) {
+          frame.addEventListener("animationend", function () {
+            frame.style.animation = "none";
+          });
+          portrait.addEventListener("pointermove", function (event) {
+            if (event.pointerType !== "mouse") return;
+            var box = portrait.getBoundingClientRect();
+            var dx = (event.clientX - box.left) / box.width - 0.5;
+            var dy = (event.clientY - box.top) / box.height - 0.5;
+            frame.classList.add("tilting");
+            frame.style.transform = "perspective(900px) rotateY(" + (dx * 12).toFixed(2) + "deg) rotateX(" + (-dy * 9).toFixed(2) + "deg) rotate(-1deg)";
+          });
+          portrait.addEventListener("pointerleave", function () {
+            frame.classList.remove("tilting");
+            frame.style.transform = "";
+          });
+        }
+
+        // Stack: wrap the tool names, then show which projects use the one under the cursor.
+        var TOOLS = {
+          "Next.js": "nextjs", React: "react", TypeScript: "typescript", Tailwind: "tailwind", "shadcn/ui": "shadcn",
+          "Node.js": "node", PostgreSQL: "postgres", "Postgres RLS": "postgres", Supabase: "supabase", pgTAP: "pgtap",
+          "Claude API": "claude", Claude: "claude", Ollama: "ollama", OCR: "ocr", "LLM APIs": "llm", "LLM API": "llm",
+          Webhooks: "webhooks", webhooks: "webhooks", Python: "python", Pandas: "pandas", SQL: "sql",
+          Vercel: "vercel", AWS: "aws", Tauri: "tauri"
+        };
+        var names = Object.keys(TOOLS).sort(function (a, b) {
+          return b.length - a.length;
+        });
+        var pattern = new RegExp("(" + names.map(function (n) { return n.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&"); }).join("|") + ")(?![\\w.])", "g");
+        document.querySelectorAll(".stack dd, .stack-line").forEach(function (box) {
+          var walker = document.createTreeWalker(box, NodeFilter.SHOW_TEXT);
+          var texts = [];
+          while (walker.nextNode()) texts.push(walker.currentNode);
+          texts.forEach(function (text) {
+            if (!pattern.test(text.data)) return;
+            pattern.lastIndex = 0;
+            var holder = document.createElement("span");
+            holder.innerHTML = text.data.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(pattern, function (name) {
+              return '<span class="tech" tabindex="0" data-key="' + TOOLS[name] + '">' + name + "</span>";
+            });
+            text.replaceWith.apply(text, Array.prototype.slice.call(holder.childNodes));
+          });
+        });
+        var trace = document.getElementById("stack-trace");
+        var cases = Array.prototype.slice.call(document.querySelectorAll(".case"));
+        function traceTool(key, label) {
+          document.querySelectorAll(".tech").forEach(function (t) {
+            t.classList.toggle("hl", t.dataset.key === key);
+          });
+          if (!key) {
+            trace.textContent = "";
+            return;
+          }
+          var used = cases
+            .filter(function (c) {
+              return c.querySelector('.stack-line .tech[data-key="' + key + '"]');
+            })
+            .map(function (c) {
+              return c.querySelector("h3").textContent.trim();
+            });
+          trace.innerHTML = used.length
+            ? (ru() ? "Где использовал " : "Where I used ") + "<strong>" + label + "</strong>: " + used.join(", ")
+            : "<strong>" + label + "</strong> " + (ru() ? "— вне этих проектов, в работе и учёбе" : "— outside these projects, at work and in study");
+        }
+        document.querySelectorAll(".stack .tech").forEach(function (t) {
+          var on = function () {
+            traceTool(t.dataset.key, t.textContent);
+          };
+          t.addEventListener("pointerenter", on);
+          t.addEventListener("focus", on);
+          t.addEventListener("click", on);
+        });
+        var stackList = document.querySelector(".stack");
+        if (stackList) {
+          stackList.addEventListener("pointerleave", function (event) {
+            if (event.pointerType === "mouse") traceTool(null);
+          });
+        }
+
+        // Copy the email.
+        document.querySelectorAll(".copy").forEach(function (button) {
+          button.addEventListener("click", function () {
+            var done = function () {
+              button.classList.add("done");
+              setTimeout(function () {
+                button.classList.remove("done");
+              }, 1800);
+            };
+            if (navigator.clipboard) navigator.clipboard.writeText(button.dataset.copy).then(done, function () {});
+          });
+        });
+
+        if (reduce || !window.ART) return;
+
+        // A ferry sails along the footer line.
+        var sea = document.getElementById("foot-sea");
+        if (sea) sea.innerHTML = '<svg class="foot-ferry" viewBox="-40 -26 92 30" width="70" height="23">' + window.ART.ferry + "</svg>";
+
       })();
     </script>
   </body>

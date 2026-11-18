@@ -664,6 +664,20 @@ def contribution_graph(lang, contrib):
     return svg
 
 
+def ferry_art(hull, deck, light, wake="#ffffff"):
+    """A small Istanbul ferry at the waterline (0), facing right."""
+    windows = "".join(f"M{x} -9h2v2h-2z" for x in range(8, 40, 4)) + "".join(f"M{x} -14h2v2h-2z" for x in range(14, 34, 4))
+    return (
+        el("path", d="M-6 -1h-18M-8 2h-28", stroke=wake, stroke_opacity=0.18, stroke_linecap="round")
+        + el("path", d="M0 -5H48L44 1H5Z", fill=hull)
+        + el("rect", x=4, y=-11, width=38, height=6, rx=1, fill=deck)
+        + el("rect", x=11, y=-16, width=24, height=5, rx=1, fill=deck)
+        + el("rect", x=21, y=-23, width=5, height=7, fill=deck)
+        + el("rect", x=21, y=-24, width=5, height=2.5, fill="#1b1b1b")
+        + el("path", d=windows, fill=light)
+    )
+
+
 def window_lit(week, row, col, pct):
     # Stable pseudo-random pattern: the same data always lights the same windows.
     return (week * 7919 + row * 104729 + col * 1299709) % 100 < pct
@@ -705,7 +719,10 @@ def skyline(lang, contrib):
         "@keyframes on{0%,42%{opacity:0}46%,80%{opacity:1}84%,100%{opacity:0}}"
         ".off0{animation:off 9s ease-in-out -1s infinite}.off1{animation:off 13s ease-in-out -6s infinite}.off2{animation:off 17s ease-in-out -11s infinite}"
         ".on0{animation:on 8s ease-in-out -3s infinite}.on1{animation:on 12s ease-in-out -7s infinite}.on2{animation:on 15s ease-in-out -2s infinite}"
-        "@media (prefers-reduced-motion:reduce){.bld,.tw,.rip,.lights,.off0,.off1,.off2,.on0,.on1,.on2{animation:none}.on0,.on1,.on2{opacity:0}}"
+        "@keyframes sail{from{transform:translateX(-90px)}to{transform:translateX(1290px)}}.ferry{animation:sail 75s linear infinite}"
+        "@keyframes beacon{0%,100%{opacity:1}50%{opacity:.15}}.beacon{animation:beacon 1.6s ease-in-out infinite}"
+        "@media (prefers-reduced-motion:reduce){.bld,.tw,.rip,.lights,.off0,.off1,.off2,.on0,.on1,.on2,.beacon{animation:none}.on0,.on1,.on2{opacity:0}"
+        ".ferry{animation:none;transform:translateX(820px)}}"
     )
     svg.text(64, 76, t["city"], SERIF_IT, 24, C["ink"])
     svg.text(64, 104, t["city_note"], BODY, 15, C["muted"])
@@ -758,6 +775,15 @@ def skyline(lang, contrib):
         for i in range(7)
     )
     svg.add(el("g", ripples, class_="rip"))
+    # The current week: an antenna with a blinking red light on its roof.
+    ax, ay = x + bw / 2 + 3, y - 4
+    svg.add(
+        el("path", d=f"M{num(ax)} {num(ay)}V{num(ay - 11)}", stroke="#6a5847", stroke_width=1.2),
+        el("circle", cx=num(ax), cy=num(ay - 12), r=5, fill="#ff5a4f", fill_opacity=0.2, class_="beacon"),
+        el("circle", cx=num(ax), cy=num(ay - 12), r=2, fill="#ff5a4f", class_="beacon"),
+    )
+    # A ferry crossing the Bosphorus.
+    svg.add(el("g", el("g", ferry_art("#22303a", "#ece4d6", "#f4b884"), transform=f"translate(0 {base + 26})"), class_="ferry"))
     return svg
 
 
