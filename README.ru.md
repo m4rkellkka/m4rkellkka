@@ -2,6 +2,8 @@
 
 <img src="assets/profile/hero.ru.svg" width="100%" alt="Михаил Савушкин, Стамбул. Делаю приложения, которыми команды клиники пользуются вместо тредов в WhatsApp. Data Scientist в Яндексе в 2022–23, потом продажи в клинике, теперь её full-stack разработчик." />
 
+<img src="assets/profile/city.ru.svg" width="100%" alt="Год коммитов в виде силуэта города над Босфором: каждое здание — неделя" />
+
 <p>
   <a href="https://m4rkellkka.github.io/m4rkellkka/"><img src="assets/profile/card-tamam.ru.svg" width="49.5%" alt="Tamam — заявки и согласования вместо тредов в WhatsApp, в пилоте" /></a>
   <a href="https://m4rkellkka.github.io/m4rkellkka/"><img src="assets/profile/card-cv-screening.ru.svg" width="49.5%" alt="CV Screening — оценивает каждый критерий цитатой из резюме, решает HR; демо MVP" /></a>
@@ -10,8 +12,6 @@
 </p>
 
 <img src="assets/profile/graph.ru.svg" width="100%" alt="Граф контрибуций за последний год с отмеченным самым плотным днём" />
-
-<img src="assets/profile/city.ru.svg" width="100%" alt="Год коммитов в виде силуэта города над Босфором: каждое здание — неделя" />
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/m4rkellkka/m4rkellkka/output/snake-dark.svg" />

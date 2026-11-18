@@ -2,6 +2,8 @@
 
 <img src="assets/profile/hero.en.svg" width="100%" alt="Mikhail Savushkin, Istanbul. I build the apps a clinic's teams use instead of WhatsApp threads. Data Scientist at Yandex in 2022–23, then a clinic's sales team, now its full-stack engineer." />
 
+<img src="assets/profile/city.en.svg" width="100%" alt="A year of commits drawn as a city skyline over the Bosphorus: each building is a week" />
+
 <p>
   <a href="https://m4rkellkka.github.io/m4rkellkka/"><img src="assets/profile/card-tamam.en.svg" width="49.5%" alt="Tamam — requests and approvals instead of WhatsApp threads, in pilot" /></a>
   <a href="https://m4rkellkka.github.io/m4rkellkka/"><img src="assets/profile/card-cv-screening.en.svg" width="49.5%" alt="CV Screening — rates each criterion with a quote from the CV, HR decides; MVP demo" /></a>
@@ -10,8 +12,6 @@
 </p>
 
 <img src="assets/profile/graph.en.svg" width="100%" alt="Contribution graph for the last year, with the busiest day marked" />
-
-<img src="assets/profile/city.en.svg" width="100%" alt="A year of commits drawn as a city skyline over the Bosphorus: each building is a week" />
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/m4rkellkka/m4rkellkka/output/snake-dark.svg" />
