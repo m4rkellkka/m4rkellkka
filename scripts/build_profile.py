@@ -201,9 +201,10 @@ FACES = {
         Face("pf-serif", "Literata-Display.ttf"),
         Face("pf-serif-it", "Literata-Display-Italic.ttf"),
         Face("pf-body", "Manrope-Regular.ttf"),
+        Face("pf-mono", "JetBrainsMono-Regular.ttf"),
     )
 }
-SERIF, SERIF_IT, BODY = (FACES[k] for k in ("pf-serif", "pf-serif-it", "pf-body"))
+SERIF, SERIF_IT, BODY, MONO = (FACES[k] for k in ("pf-serif", "pf-serif-it", "pf-body", "pf-mono"))
 
 
 def num(value):
@@ -606,7 +607,10 @@ def contribution_graph(lang, contrib):
         ".arrow{stroke-dasharray:1;animation:draw .8s cubic-bezier(.65,0,.35,1) 1.5s both}"
         "@keyframes ping{0%{transform:scale(1);opacity:.8}80%,100%{transform:scale(2.2);opacity:0}}"
         ".ping{transform-box:fill-box;transform-origin:center;animation:ping 2.4s cubic-bezier(0,0,.2,1) 2s infinite both}"
-        "@media (prefers-reduced-motion:reduce){.wk,.late,.arrow,.ping{animation:none}.ping{opacity:0}}"
+        "@keyframes blink{0%,91%,100%{opacity:1}93%,97%{opacity:0}}.eo{animation:blink 4.6s infinite}"
+        "@keyframes blinkc{0%,91%,100%{opacity:0}93%,97%{opacity:1}}.ec{animation:blinkc 4.6s infinite}"
+        ".cat-still{display:none}"
+        "@media (prefers-reduced-motion:reduce){.wk,.late,.arrow,.ping,.eo,.ec{animation:none}.ping,.ec{opacity:0}.cat{display:none}.cat-still{display:inline}}"
     )
 
     total = grouped(contrib["total"], lang)
@@ -657,6 +661,34 @@ def contribution_graph(lang, contrib):
         el("path", d=d, pathLength=1, fill="none", stroke=C["accent"], stroke_width=1.6, stroke_linecap="round", class_="arrow"),
         el("path", d=f"M{num(bx - 4)} {num(by - 11)}L{num(bx)} {num(by - 5)}L{num(bx + 4)} {num(by - 11)}", fill="none", stroke=C["accent"], stroke_width=1.6, stroke_linecap="round", stroke_linejoin="round", class_="late"),
     )
+
+    # A small ASCII cat hops along the top of the graph, on the side away from the note.
+    lo, hi = min(nx, sx) - 56, max(nx + note_w, bx) + 34
+    spans = [(x0 + 30, lo), (hi, x0 + weeks * step - 30)]
+    a, b = max(spans, key=lambda span: span[1] - span[0])
+    ground = y0 - 4
+    hops = max(2, int((b - a) // 72))
+    xs = [(b - a) * i / hops for i in range(hops + 1)]
+    route = xs + xs[-2::-1]
+    path = "M0 0"
+    for i, (p0, p1) in enumerate(zip(route, route[1:])):
+        lift = 26 + (i * 5 % 3) * 9
+        path += f"Q{num((p0 + p1) / 2)} {-2 * lift} {num(p1)} 0"
+
+    def cat(eyes=True):
+        lines = [(" /\\_/\\ ", -39, None), ("( o.o )", -22, "eo" if eyes else None), (" > ^ < ", -5, None)]
+        if eyes:
+            lines.append(("( -.- )", -22, "ec"))
+        out = ""
+        for text, y, extra in lines:
+            svg.chars.setdefault(MONO.family, set()).update(text)
+            css = f"{MONO.family} {extra}" if extra else MONO.family
+            out += el("text", escape(text), x=0, y=y, class_=css, font_size=16, fill=C["ink"], text_anchor="middle")
+        return out
+
+    motion = el("animateMotion", path=path, dur=f"{num(len(route) * 0.85)}s", begin="2.2s", repeatCount="indefinite")
+    svg.add(el("g", el("g", cat() + motion), transform=f"translate({num(a)} {ground})", class_="cat"))
+    svg.add(el("g", cat(eyes=False), transform=f"translate({num(a)} {ground})", class_="cat-still"))
     return svg
 
 
@@ -696,13 +728,18 @@ def skyline(lang, contrib):
         ".tw{animation:flicker 3.2s ease-in-out infinite}"
         "@keyframes drift{from{transform:translateX(-14px)}to{transform:translateX(14px)}}"
         ".rip{animation:drift 6s ease-in-out infinite alternate}"
-        "@media (prefers-reduced-motion:reduce){.bld,.tw,.rip,.lights{animation:none}}"
+        # Living city: some lit windows switch off for a while, some dark ones switch on.
+        "@keyframes off{0%,36%{opacity:1}40%,68%{opacity:0}72%,100%{opacity:1}}"
+        "@keyframes on{0%,42%{opacity:0}46%,80%{opacity:1}84%,100%{opacity:0}}"
+        ".off0{animation:off 9s ease-in-out -1s infinite}.off1{animation:off 13s ease-in-out -6s infinite}.off2{animation:off 17s ease-in-out -11s infinite}"
+        ".on0{animation:on 8s ease-in-out -3s infinite}.on1{animation:on 12s ease-in-out -7s infinite}.on2{animation:on 15s ease-in-out -2s infinite}"
+        "@media (prefers-reduced-motion:reduce){.bld,.tw,.rip,.lights,.off0,.off1,.off2,.on0,.on1,.on2{animation:none}.on0,.on1,.on2{opacity:0}}"
     )
     svg.text(64, 76, t["city"], SERIF_IT, 24, C["ink"])
     svg.text(64, 104, t["city_note"], BODY, 15, C["muted"])
     svg.text(1136, 76, [(f"{t['busiest_week']}  ", C["muted"]), (str(peak), C["ink"])], BODY, 16, text_anchor="end")
 
-    lit, twinkle, mirror = [], [], ""
+    groups, mirror = {}, ""
     for w, total in enumerate(totals):
         share = total / peak
         h = 5 if not total else 14 + (share ** 0.7) * 176
@@ -720,13 +757,23 @@ def skyline(lang, contrib):
         rows = int((h - 10) // 7)
         for r in range(rows):
             for col, wx in enumerate((x + 3, x + 8)):
+                rect = f"M{wx} {num(y + 6 + r * 7)}h3v3h-3z"
+                mix = w * 7919 + r * 104729 + col * 1299709
                 if window_lit(w, r, col, pct):
-                    rect = f"M{wx} {num(y + 6 + r * 7)}h3v3h-3z"
-                    (twinkle if (w * 31 + r * 7 + col) % 23 == 0 else lit).append(rect)
+                    group = "tw" if (w * 31 + r * 7 + col) % 23 == 0 else f"off{mix % 3}" if mix % 4 == 0 else "lit"
+                elif mix % 6 == 0:
+                    group = f"on{mix % 3}"
+                else:
+                    continue
+                groups.setdefault(group, []).append(rect)
+    lit = groups.get("lit", [])
     svg.defs.append(
         el("linearGradient", el("stop", offset=0, stop_color="#3d342c") + el("stop", offset=1, stop_color="#221d19"), id="facade", x1=0, y1=0, x2=0, y2=1)
     )
-    svg.add(el("g", el("path", d="".join(lit), fill="#f4b884", fill_opacity=0.85) + el("path", d="".join(twinkle), fill="#ffd2a6", class_="tw"), class_="lights"))
+    lights = el("path", d="".join(lit), fill="#f4b884", fill_opacity=0.85)
+    for name in sorted(k for k in groups if k != "lit"):
+        lights += el("path", d="".join(groups[name]), fill="#ffd2a6" if name == "tw" else "#f4b884", fill_opacity=0.9, class_=name)
+    svg.add(el("g", lights, class_="lights"))
     # The water: a faded mirror image and a few slow ripples.
     svg.defs.append(
         el("linearGradient", el("stop", offset=0, stop_color="#fff", stop_opacity=0.5) + el("stop", offset=1, stop_color="#fff", stop_opacity=0), id="fadew", x1=0, y1=0, x2=0, y2=1)
