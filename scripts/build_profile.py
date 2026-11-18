@@ -664,152 +664,6 @@ def contribution_graph(lang, contrib):
     return svg
 
 
-# A small ginger cat drawn with smooth vector shapes, facing right, anchored at its bottom centre.
-CAT = {"fur": "url(#catfur)", "shade": "#b9652a", "white": "#f7ecdf", "pink": "#f1a3a0", "eye": "#2a1a12", "line": "#7a3f18"}
-
-
-def cat_defs(svg):
-    if any('id="catfur"' in d for d in svg.defs):
-        return
-    svg.defs.append(
-        el("linearGradient", el("stop", offset=0, stop_color="#f2a463") + el("stop", offset=1, stop_color="#cf7433"), id="catfur", x1=0, y1=0, x2=0.4, y2=1)
-    )
-
-
-def cat_head(cx, cy, asleep=False):
-    c = CAT
-    ears = (
-        el("path", d=f"M{cx - 7.5} {cy - 3}L{cx - 6} {cy - 12.5}L{cx - 0.5} {cy - 7}Z", fill=c["fur"])
-        + el("path", d=f"M{cx + 2} {cy - 7.5}L{cx + 7.5} {cy - 12.5}L{cx + 8.5} {cy - 2.5}Z", fill=c["fur"])
-        + el("path", d=f"M{cx - 5.8} {cy - 5}L{cx - 5} {cy - 10}L{cx - 2.2} {cy - 7}Z", fill=c["pink"])
-        + el("path", d=f"M{cx + 3.6} {cy - 7.4}L{cx + 6.6} {cy - 10}L{cx + 7} {cy - 4.8}Z", fill=c["pink"])
-    )
-    head = el("ellipse", cx=cx, cy=cy, rx=8.6, ry=7.6, fill=c["fur"])
-    stripes = el("path", d=f"M{cx - 1.5} {cy - 7.4}v2.4M{cx + 1.2} {cy - 7.5}v2.2", stroke=c["shade"], stroke_width=1, stroke_linecap="round")
-    muzzle = el("ellipse", cx=cx + 2.2, cy=cy + 2.6, rx=4.2, ry=3, fill=c["white"])
-    nose = el("path", d=f"M{cx + 1.2} {cy + 0.6}h2l-1 1.2z", fill=c["pink"])
-    if asleep:
-        eyes = el("path", d=f"M{cx - 3.6} {cy - 1}q1.4 1.3 2.8 0M{cx + 3.6} {cy - 1.2}q1.4 1.3 2.8 0", fill="none", stroke=c["eye"], stroke_width=0.9, stroke_linecap="round")
-    else:
-        eyes = (
-            el("ellipse", cx=cx - 2.2, cy=cy - 1, rx=1.25, ry=1.6, fill=c["eye"])
-            + el("ellipse", cx=cx + 5, cy=cy - 1.2, rx=1.25, ry=1.6, fill=c["eye"])
-            + el("circle", cx=cx - 1.8, cy=cy - 1.6, r=0.45, fill="#fff")
-            + el("circle", cx=cx + 5.4, cy=cy - 1.8, r=0.45, fill="#fff")
-        )
-    return ears + head + stripes + muzzle + nose + eyes
-
-
-def cat_sprite(svg, pose, scale=1.3):
-    cat_defs(svg)
-    c = CAT
-    if pose == "sit":
-        art = (
-            el("path", d="M-8 -1.5C-17 -1 -19 -9 -15 -14", fill="none", stroke=c["fur"], stroke_width=3.6, stroke_linecap="round")
-            + el("path", d="M-11 0C-14 -9 -11 -21 -1 -23C7 -24 11 -17 11 -9L11 0Z", fill=c["fur"])
-            + el("path", d="M-6 -15c2 -1 4 -1 6 0M-8 -10c2 -1 4 -1 6 0", fill="none", stroke=c["shade"], stroke_width=1.1, stroke_linecap="round")
-            + el("ellipse", cx=6.5, cy=-12, rx=3.6, ry=7.5, fill=c["white"])
-            + el("rect", x=3, y=-9, width=4.2, height=9, rx=2.1, fill=c["fur"])
-            + el("rect", x=7.4, y=-9, width=4.2, height=9, rx=2.1, fill=c["fur"])
-            + el("ellipse", cx=5.1, cy=-1, rx=2.4, ry=1.3, fill=c["white"])
-            + el("ellipse", cx=9.5, cy=-1, rx=2.4, ry=1.3, fill=c["white"])
-            + cat_head(4, -27)
-        )
-    elif pose == "jump":
-        art = (
-            el("path", d="M-13 -15C-19 -18 -21 -24 -18 -29", fill="none", stroke=c["fur"], stroke_width=3.4, stroke_linecap="round")
-            + el("path", d="M-8 -11L-17 -5M-5 -11L-13 -3", fill="none", stroke=c["fur"], stroke_width=3.6, stroke_linecap="round")
-            + el("path", d="M8 -12L17 -7M5 -11L13 -4", fill="none", stroke=c["fur"], stroke_width=3.6, stroke_linecap="round")
-            + el("ellipse", cx=0, cy=-14, rx=14, ry=6, fill=c["fur"])
-            + el("path", d="M-6 -19c2 -1 4 -1 6 0M-1 -19.5c2 -1 4 -1 6 0", fill="none", stroke=c["shade"], stroke_width=1.1, stroke_linecap="round")
-            + el("ellipse", cx=8, cy=-12, rx=5, ry=3, fill=c["white"])
-            + el("circle", cx=17.6, cy=-6.4, r=1.6, fill=c["white"]) + el("circle", cx=13.6, cy=-3.4, r=1.6, fill=c["white"])
-            + cat_head(15, -21)
-        )
-    else:  # asleep, curled up
-        art = (
-            el("ellipse", cx=-2, cy=-7, rx=14, ry=7, fill=c["fur"])
-            + el("path", d="M-7 -12c2 -1.2 4 -1.2 6 0M-11 -9c2 -1.2 4 -1.2 6 0", fill="none", stroke=c["shade"], stroke_width=1.1, stroke_linecap="round")
-            + el("path", d="M-14 -3C-10 1 2 1 9 -1", fill="none", stroke=c["fur"], stroke_width=3.4, stroke_linecap="round")
-            + el("path", d="M-14 -3C-10 1 2 1 9 -1", fill="none", stroke=c["shade"], stroke_width=1, stroke_opacity=0.5, stroke_linecap="round")
-            + cat_head(9, -8, asleep=True)
-        )
-    shadow = el("ellipse", cx=0, cy=0, rx=12, ry=1.6, fill="#000", fill_opacity=0.35)
-    return el("g", (shadow if pose != "jump" else "") + art, transform=f"scale({scale})")
-
-
-def quad_length(p0, c, p1, steps=16):
-    total, prev = 0.0, p0
-    for i in range(1, steps + 1):
-        t = i / steps
-        pt = ((1 - t) ** 2 * p0[0] + 2 * (1 - t) * t * c[0] + t * t * p1[0], (1 - t) ** 2 * p0[1] + 2 * (1 - t) * t * c[1] + t * t * p1[1])
-        total += math.hypot(pt[0] - prev[0], pt[1] - prev[1])
-        prev = pt
-    return total
-
-
-def roof_cat(svg, roofs, totals):
-    """The cat hops along the roofs, sits for a moment on each stop and sleeps through long quiet spells."""
-    stops, w = [], 0
-    while w < len(totals):
-        if totals[w] == 0:
-            j = w
-            while j < len(totals) and totals[j] == 0:
-                j += 1
-            if j - w >= 4:
-                stops.append(((w + j) // 2, "sleep"))
-            w = j
-            continue
-        stops.append((w, "sit"))
-        w += 4 + (w * 7) % 3
-    route = stops + stops[-2::-1]
-    events = [(0.0, 0.0)]  # (time, distance along the path)
-    segments = []  # (start time, pose, facing)
-    path = f"M{num(roofs[route[0][0]][0])} {num(roofs[route[0][0]][1])}"
-    t = d = 0.0
-    for k, (week, pose) in enumerate(route):
-        nxt = route[k + 1][0] if k + 1 < len(route) else None
-        facing = "r" if nxt is None or roofs[nxt][0] >= roofs[week][0] else "l"
-        segments.append((t, pose, "r" if pose == "sleep" else facing))
-        t += 7.0 if pose == "sleep" else 2.4
-        events.append((t, d))
-        if nxt is None:
-            break
-        (x1, y1), (x2, y2) = roofs[week], roofs[nxt]
-        c = ((x1 + x2) / 2, min(y1, y2) - 44 - 0.12 * abs(x2 - x1))
-        path += f"Q{num(c[0])} {num(c[1])} {num(x2)} {num(y2)}"
-        segments.append((t, "jump", facing))
-        t += 0.55 + abs(x2 - x1) / 700
-        d += quad_length((x1, y1), c, (x2, y2))
-        events.append((t, d))
-    total_t, total_d = t, d or 1
-    key_times = ";".join(num(round(e[0] / total_t, 4)) for e in events)
-    key_points = ";".join(num(round(e[1] / total_d, 4)) for e in events)
-    motion = el("animateMotion", path=path, dur=f"{num(round(total_t, 2))}s", keyTimes=key_times, keyPoints=key_points, calcMode="linear", repeatCount="indefinite")
-
-    times = ";".join(num(round(s[0] / total_t, 4)) for s in segments)
-    groups = ""
-    for pose, facing in (("sit", "r"), ("sit", "l"), ("jump", "r"), ("jump", "l"), ("sleep", "r")):
-        values = ";".join("1" if (s[1], s[2]) == (pose, facing) else "0" for s in segments)
-        show = el("animate", attributeName="opacity", values=values, keyTimes=times, dur=f"{num(round(total_t, 2))}s", calcMode="discrete", repeatCount="indefinite")
-        art = cat_sprite(svg, pose)
-        if pose == "sleep":
-            svg.chars.setdefault(SERIF_IT.family, set()).update("zZ")
-            art += el("text", "z", x=16, y=-24, class_=f"{SERIF_IT.family} zz", font_size=10, fill=C["soft"])
-            art += el("text", "Z", x=23, y=-34, class_=f"{SERIF_IT.family} zz z2", font_size=13, fill=C["soft"])
-        flip = ' transform="scale(-1 1)"' if facing == "l" else ""
-        groups += f"<g opacity=\"0\"{flip}>{show}{art}</g>"
-    svg.styles.append(
-        "@keyframes zz{0%{opacity:0;transform:translate(0,4px)}30%{opacity:.9}100%{opacity:0;transform:translate(6px,-10px)}}"
-        ".zz{animation:zz 2.6s ease-out infinite}.z2{animation-delay:1.3s}"
-        ".cat-still{display:none}"
-        "@media (prefers-reduced-motion:reduce){.cat{display:none}.cat-still{display:inline}.zz{animation:none}}"
-    )
-    svg.add(el("g", groups + motion, class_="cat"))
-    first = roofs[stops[0][0]]
-    svg.add(el("g", cat_sprite(svg, "sit"), transform=f"translate({num(first[0])} {num(first[1])})", class_="cat-still"))
-
-
 def window_lit(week, row, col, pct):
     # Stable pseudo-random pattern: the same data always lights the same windows.
     return (week * 7919 + row * 104729 + col * 1299709) % 100 < pct
@@ -857,12 +711,11 @@ def skyline(lang, contrib):
     svg.text(64, 104, t["city_note"], BODY, 15, C["muted"])
     svg.text(1136, 76, [(f"{t['busiest_week']}  ", C["muted"]), (str(peak), C["ink"])], BODY, 16, text_anchor="end")
 
-    groups, mirror, roofs = {}, "", []
+    groups, mirror = {}, ""
     for w, total in enumerate(totals):
         share = total / peak
         h = 5 if not total else 14 + (share ** 0.7) * 176
         x, y = x0 + w * step, base - h
-        roofs.append((x + bw / 2 + 3, y - 4))
         body = (
             el("polygon", points=f"{x + bw},{num(y)} {x + bw + depth},{num(y - 4)} {x + bw + depth},{base - 4} {x + bw},{base}", fill="#15120f")
             + el("polygon", points=f"{x},{num(y)} {x + depth},{num(y - 4)} {x + bw + depth},{num(y - 4)} {x + bw},{num(y)}", fill="#5a4a3d")
@@ -905,7 +758,6 @@ def skyline(lang, contrib):
         for i in range(7)
     )
     svg.add(el("g", ripples, class_="rip"))
-    roof_cat(svg, roofs, totals)
     return svg
 
 
