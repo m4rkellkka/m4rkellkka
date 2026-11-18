@@ -201,10 +201,9 @@ FACES = {
         Face("pf-serif", "Literata-Display.ttf"),
         Face("pf-serif-it", "Literata-Display-Italic.ttf"),
         Face("pf-body", "Manrope-Regular.ttf"),
-        Face("pf-mono", "JetBrainsMono-Regular.ttf"),
     )
 }
-SERIF, SERIF_IT, BODY, MONO = (FACES[k] for k in ("pf-serif", "pf-serif-it", "pf-body", "pf-mono"))
+SERIF, SERIF_IT, BODY = (FACES[k] for k in ("pf-serif", "pf-serif-it", "pf-body"))
 
 
 def num(value):
@@ -665,132 +664,78 @@ def contribution_graph(lang, contrib):
     return svg
 
 
-# The cat from way-to-1111 as small pixel art made of ASCII: every pixel is a square cell in its
-# colour with a faint glyph of the same hue on top. Reduced from smooth shapes (scripts/profile/make_cat_art.py),
-# facing right; orange areas
-# get a lighter top edge and a darker bottom edge automatically, so the shape reads round.
-CAT_ART = {
-    "sit": [
-        "...........K.......K..",
-        "..........KOK.....KOK.",
-        "..........KOPKKKKKPPK.",
-        "..........KOPOOOOOPPK.",
-        "..........KOOOOOOOOOK.",
-        "..........KOOOOOOOOOK.",
-        "..........KOOKKOOKOOK.",
-        ".........KOOOKKOOKOOOK",
-        "..........KOOOWPWOOOK.",
-        "..........KOOOWWWWOOK.",
-        "........KKKOOOWWWOOK..",
-        ".......KOOOOOOOOOOK...",
-        "......KOOOOOOOWWWWK...",
-        "...KK.KOOOOOOOWWWWWK..",
-        "..KOOKOOOOOOOOWWWWWK..",
-        "..KOOKOOOOOOOOWWWWWK..",
-        ".KOOKKOOOOOOOOOWWWOK..",
-        ".KOOKKOOOOOOOOOWWOK...",
-        "..KOOKKOOOOOOOOOOOK...",
-        "..KOOOOOOOOOOOOOOOK...",
-        "...KOOOKKOOOOWWWWWWK..",
-        "....KKK..KKKKWWKKWK...",
-        ".............KK..K....",
-    ],
-    "jump": [
-        "..................K.....K..",
-        ".................KOK...KOK.",
-        ".KK..............KPPKKKOPK.",
-        "KOOK.............KOOOOOOPK.",
-        "KOOK.............KOOOOOOOOK",
-        ".KOOK...........KOOKKOOKOOK",
-        ".KOOK.....KKKK..KOOKKOOKOOK",
-        ".KOOOK.KKKOOOOKKKOOOWPWOOK.",
-        "..KOOOKOOOOOOOOOOOOOWWWWOK.",
-        "...KOOOOOOOOOOOOOOOOWWWWK..",
-        "....KOOOOOOOOOOOOOOOKKKK...",
-        "....KOOOOOOOOOOOWWWWK......",
-        ".....KOOOOOOOOOOWWWWK......",
-        "....KOOOOOOOOOOOOWWOOKK....",
-        "..KKOOOKKKKKKKKKKKKOOOWK...",
-        ".KWWOOK............KKWWWK..",
-        ".KWWKK...............KKK...",
-        "..KK.......................",
-    ],
-    "sleep": [
-        "..............K.....K....",
-        ".............KOK...KOK...",
-        ".............KPOKKKOPK...",
-        ".........KKKKKPOOOOOPK...",
-        "......KKKOOOOOOOOOOOOOK..",
-        "....KKOOOOOOOOOOOOOOOOK..",
-        "...KOOOOOOOOOOOOOOOOOOK..",
-        "...KOOOOOOOOOOOKKOKKKOK..",
-        "..KOOOOOOOOOOOOOWPPWOOK..",
-        "...KOOOOOOOOOOOOWWWWOK...",
-        "...KOOOOOOOOOOOOOWWOK....",
-        "....KOOOOOOOOOOOOOOK.....",
-        ".....KOOOOOOOOOOKKK......",
-        "......KKKOOOOOOOK........",
-        ".........KKKKKKK.........",
-    ],
-}
-CAT_PALETTE = {
-    "K": ("#3a2416", ":"), "D": ("#9a5224", "="), "O": ("#d27a38", "+"), "L": ("#eda05e", "*"),
-    "T": ("#a85a26", "="), "W": ("#f4e8d6", "#"), "P": ("#ea9a96", "o"),
-}
+# A small ginger cat drawn with smooth vector shapes, facing right, anchored at its bottom centre.
+CAT = {"fur": "url(#catfur)", "shade": "#b9652a", "white": "#f7ecdf", "pink": "#f1a3a0", "eye": "#2a1a12", "line": "#7a3f18"}
 
 
-def lighten(hex_colour, amount=0.3):
-    r, g, b = (int(hex_colour[i:i + 2], 16) for i in (1, 3, 5))
-    return "#" + "".join(f"{round(v + (255 - v) * amount):02x}" for v in (r, g, b))
+def cat_defs(svg):
+    if any('id="catfur"' in d for d in svg.defs):
+        return
+    svg.defs.append(
+        el("linearGradient", el("stop", offset=0, stop_color="#f2a463") + el("stop", offset=1, stop_color="#cf7433"), id="catfur", x1=0, y1=0, x2=0.4, y2=1)
+    )
 
 
-def cat_pixels(pose):
-    rows = CAT_ART[pose]
-    width = max(len(r) for r in rows)
-    grid = [list(r.ljust(width, ".")) for r in rows]
-    shaded = [row[:] for row in grid]
-    for r, row in enumerate(grid):
-        for c, px in enumerate(row):
-            if px != "O":
-                continue
-            # only the outer outline counts as an edge, so the eyes don't get a light rim
-            def outer(y):
-                return not 0 <= y < len(grid) or grid[y][c] == "." or (grid[y][c] == "K" and (not 0 <= 2 * y - r < len(grid) or grid[2 * y - r][c] == "."))
-            if outer(r - 1):
-                shaded[r][c] = "L"
-            elif outer(r + 1):
-                shaded[r][c] = "D"
-    return shaded
+def cat_head(cx, cy, asleep=False):
+    c = CAT
+    ears = (
+        el("path", d=f"M{cx - 7.5} {cy - 3}L{cx - 6} {cy - 12.5}L{cx - 0.5} {cy - 7}Z", fill=c["fur"])
+        + el("path", d=f"M{cx + 2} {cy - 7.5}L{cx + 7.5} {cy - 12.5}L{cx + 8.5} {cy - 2.5}Z", fill=c["fur"])
+        + el("path", d=f"M{cx - 5.8} {cy - 5}L{cx - 5} {cy - 10}L{cx - 2.2} {cy - 7}Z", fill=c["pink"])
+        + el("path", d=f"M{cx + 3.6} {cy - 7.4}L{cx + 6.6} {cy - 10}L{cx + 7} {cy - 4.8}Z", fill=c["pink"])
+    )
+    head = el("ellipse", cx=cx, cy=cy, rx=8.6, ry=7.6, fill=c["fur"])
+    stripes = el("path", d=f"M{cx - 1.5} {cy - 7.4}v2.4M{cx + 1.2} {cy - 7.5}v2.2", stroke=c["shade"], stroke_width=1, stroke_linecap="round")
+    muzzle = el("ellipse", cx=cx + 2.2, cy=cy + 2.6, rx=4.2, ry=3, fill=c["white"])
+    nose = el("path", d=f"M{cx + 1.2} {cy + 0.6}h2l-1 1.2z", fill=c["pink"])
+    if asleep:
+        eyes = el("path", d=f"M{cx - 3.6} {cy - 1}q1.4 1.3 2.8 0M{cx + 3.6} {cy - 1.2}q1.4 1.3 2.8 0", fill="none", stroke=c["eye"], stroke_width=0.9, stroke_linecap="round")
+    else:
+        eyes = (
+            el("ellipse", cx=cx - 2.2, cy=cy - 1, rx=1.25, ry=1.6, fill=c["eye"])
+            + el("ellipse", cx=cx + 5, cy=cy - 1.2, rx=1.25, ry=1.6, fill=c["eye"])
+            + el("circle", cx=cx - 1.8, cy=cy - 1.6, r=0.45, fill="#fff")
+            + el("circle", cx=cx + 5.4, cy=cy - 1.8, r=0.45, fill="#fff")
+        )
+    return ears + head + stripes + muzzle + nose + eyes
 
 
-def cat_sprite(svg, pose, cell=2.7):
-    """Pixel-art cat anchored at its bottom centre (0, 0)."""
-    grid = cat_pixels(pose)
-    width = len(grid[0])
-    left, top = -width * cell / 2, -len(grid) * cell
-    paths = {}
-    for r, row in enumerate(grid):
-        for c, colour in enumerate(row):
-            if colour != ".":
-                paths.setdefault(colour, []).append(f"M{num(left + c * cell)} {num(top + r * cell)}h{num(cell)}v{num(cell)}h{num(-cell)}z")
-    out = "".join(el("path", d="".join(d), fill=CAT_PALETTE[k][0]) for k, d in paths.items())
-    size = cell / 0.6  # JetBrains Mono advance is 0.6 em: one glyph per pixel
-    for r, row in enumerate(grid):
-        spans, prev = [], None
-        for colour in row:
-            glyph, fill = (" ", None) if colour in ".K" else (CAT_PALETTE[colour][1], lighten(CAT_PALETTE[colour][0]))
-            if spans and fill == prev:
-                spans[-1][0] += glyph
-            else:
-                spans.append([glyph, fill])
-                prev = fill
-        text = "".join(t for t, _ in spans)
-        if not text.strip():
-            continue
-        svg.chars.setdefault(MONO.family, set()).update(text)
-        inner = "".join(el("tspan", escape(t), fill=f) if f else escape(t) for t, f in spans)
-        out += el("text", inner, x=num(left), y=num(top + r * cell + cell * 0.82), class_=MONO.family, font_size=num(size), fill_opacity=0.4)
-    return out
+def cat_sprite(svg, pose, scale=1.3):
+    cat_defs(svg)
+    c = CAT
+    if pose == "sit":
+        art = (
+            el("path", d="M-8 -1.5C-17 -1 -19 -9 -15 -14", fill="none", stroke=c["fur"], stroke_width=3.6, stroke_linecap="round")
+            + el("path", d="M-11 0C-14 -9 -11 -21 -1 -23C7 -24 11 -17 11 -9L11 0Z", fill=c["fur"])
+            + el("path", d="M-6 -15c2 -1 4 -1 6 0M-8 -10c2 -1 4 -1 6 0", fill="none", stroke=c["shade"], stroke_width=1.1, stroke_linecap="round")
+            + el("ellipse", cx=6.5, cy=-12, rx=3.6, ry=7.5, fill=c["white"])
+            + el("rect", x=3, y=-9, width=4.2, height=9, rx=2.1, fill=c["fur"])
+            + el("rect", x=7.4, y=-9, width=4.2, height=9, rx=2.1, fill=c["fur"])
+            + el("ellipse", cx=5.1, cy=-1, rx=2.4, ry=1.3, fill=c["white"])
+            + el("ellipse", cx=9.5, cy=-1, rx=2.4, ry=1.3, fill=c["white"])
+            + cat_head(4, -27)
+        )
+    elif pose == "jump":
+        art = (
+            el("path", d="M-13 -15C-19 -18 -21 -24 -18 -29", fill="none", stroke=c["fur"], stroke_width=3.4, stroke_linecap="round")
+            + el("path", d="M-8 -11L-17 -5M-5 -11L-13 -3", fill="none", stroke=c["fur"], stroke_width=3.6, stroke_linecap="round")
+            + el("path", d="M8 -12L17 -7M5 -11L13 -4", fill="none", stroke=c["fur"], stroke_width=3.6, stroke_linecap="round")
+            + el("ellipse", cx=0, cy=-14, rx=14, ry=6, fill=c["fur"])
+            + el("path", d="M-6 -19c2 -1 4 -1 6 0M-1 -19.5c2 -1 4 -1 6 0", fill="none", stroke=c["shade"], stroke_width=1.1, stroke_linecap="round")
+            + el("ellipse", cx=8, cy=-12, rx=5, ry=3, fill=c["white"])
+            + el("circle", cx=17.6, cy=-6.4, r=1.6, fill=c["white"]) + el("circle", cx=13.6, cy=-3.4, r=1.6, fill=c["white"])
+            + cat_head(15, -21)
+        )
+    else:  # asleep, curled up
+        art = (
+            el("ellipse", cx=-2, cy=-7, rx=14, ry=7, fill=c["fur"])
+            + el("path", d="M-7 -12c2 -1.2 4 -1.2 6 0M-11 -9c2 -1.2 4 -1.2 6 0", fill="none", stroke=c["shade"], stroke_width=1.1, stroke_linecap="round")
+            + el("path", d="M-14 -3C-10 1 2 1 9 -1", fill="none", stroke=c["fur"], stroke_width=3.4, stroke_linecap="round")
+            + el("path", d="M-14 -3C-10 1 2 1 9 -1", fill="none", stroke=c["shade"], stroke_width=1, stroke_opacity=0.5, stroke_linecap="round")
+            + cat_head(9, -8, asleep=True)
+        )
+    shadow = el("ellipse", cx=0, cy=0, rx=12, ry=1.6, fill="#000", fill_opacity=0.35)
+    return el("g", (shadow if pose != "jump" else "") + art, transform=f"scale({scale})")
 
 
 def quad_length(p0, c, p1, steps=16):
@@ -850,8 +795,8 @@ def roof_cat(svg, roofs, totals):
         art = cat_sprite(svg, pose)
         if pose == "sleep":
             svg.chars.setdefault(SERIF_IT.family, set()).update("zZ")
-            art += el("text", "z", x=20, y=-36, class_=f"{SERIF_IT.family} zz", font_size=10, fill=C["soft"])
-            art += el("text", "Z", x=28, y=-48, class_=f"{SERIF_IT.family} zz z2", font_size=13, fill=C["soft"])
+            art += el("text", "z", x=16, y=-24, class_=f"{SERIF_IT.family} zz", font_size=10, fill=C["soft"])
+            art += el("text", "Z", x=23, y=-34, class_=f"{SERIF_IT.family} zz z2", font_size=13, fill=C["soft"])
         flip = ' transform="scale(-1 1)"' if facing == "l" else ""
         groups += f"<g opacity=\"0\"{flip}>{show}{art}</g>"
     svg.styles.append(
