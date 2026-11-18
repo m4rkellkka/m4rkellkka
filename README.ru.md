@@ -9,6 +9,10 @@
   <a href="https://github.com/m4rkellkka/Lumis"><img src="assets/profile/card-lumis.ru.svg" width="49.5%" alt="Lumis — подготовка к экзаменам на локальных LLM, пет-проект" /></a>
 </p>
 
+<img src="assets/profile/graph.ru.svg" width="100%" alt="Граф контрибуций за последний год с отмеченным самым плотным днём" />
+
+<img src="assets/profile/city.ru.svg" width="100%" alt="Год коммитов в виде силуэта города над Босфором: каждое здание — неделя" />
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/m4rkellkka/m4rkellkka/output/snake-dark.svg" />
   <img src="https://raw.githubusercontent.com/m4rkellkka/m4rkellkka/output/snake.svg" width="100%" alt="Змейка ест мой граф контрибуций" />

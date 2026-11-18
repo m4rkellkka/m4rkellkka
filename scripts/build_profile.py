@@ -14,6 +14,7 @@ import math
 import os
 import urllib.error
 import urllib.request
+from datetime import date
 from pathlib import Path
 from xml.sax.saxutils import escape
 
@@ -25,6 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FONTS = ROOT / "scripts" / "profile" / "fonts"
 OUT = ROOT / "assets" / "profile"
 LIVE = OUT / "live.json"
+CONTRIB = OUT / "contributions.json"
 USER = "m4rkellkka"
 LANGS = ("en", "ru")
 
@@ -245,7 +247,9 @@ class Svg:
             self.chars.setdefault(span_face.family, set()).update(part)
             own_class = span_face.family if span_face is not face else None
             inner += el("tspan", escape(part), fill=span_fill, class_=own_class) if span_fill or own_class else escape(part)
-        self.add(el("text", inner, x=x, y=y, class_=face.family, font_size=size, fill=fill, **values))
+        extra = values.pop("class_", None)  # e.g. an animation class next to the font class
+        css = f"{face.family} {extra}" if extra else face.family
+        self.add(el("text", inner, x=x, y=y, class_=css, font_size=size, fill=fill, **values))
 
     def render(self):
         fonts = "".join(
@@ -527,6 +531,217 @@ def footer(lang):
     return svg
 
 
+GRAPH_TEXT = {
+    "en": {
+        "total": "contributions in the last year",
+        "longest": "longest streak",
+        "current": "current streak",
+        "days": "days",
+        "busiest": "busiest day: {count}, {date}",
+        "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        "city": "A year of commits, as a skyline over the Bosphorus",
+        "city_note": "each building is a week · lit windows are contributions",
+        "busiest_week": "busiest week",
+    },
+    "ru": {
+        "total": "контрибуций за последний год",
+        "longest": "самая длинная серия",
+        "current": "текущая серия",
+        "days": "дн.",
+        "busiest": "самый плотный день: {count}, {date}",
+        "months": ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"],
+        "city": "Год коммитов — силуэт города над Босфором",
+        "city_note": "каждое здание — неделя · горящие окна — контрибуции",
+        "busiest_week": "самая плотная неделя",
+    },
+}
+
+
+def contribution_stats(days):
+    counts = [c for _, c in days]
+    longest = run = 0
+    for c in counts:
+        run = run + 1 if c else 0
+        longest = max(longest, run)
+    current = 0
+    tail = counts[:-1] if counts and counts[-1] == 0 else counts  # today may simply not have started yet
+    for c in reversed(tail):
+        if not c:
+            break
+        current += 1
+    busiest = max(range(len(days)), key=lambda i: (days[i][1], i))
+    return {"longest": longest, "current": current, "busiest": busiest}
+
+
+def grouped(n, lang):
+    return f"{n:,}".replace(",", " " if lang == "ru" else ",")
+
+
+def contribution_graph(lang, contrib):
+    """The contribution calendar inked in week by week, with a hand-written note on the busiest day."""
+    t = GRAPH_TEXT[lang]
+    days = contrib["days"]
+    stats = contribution_stats(days)
+    # GitHub weeks start on Sunday; pad the first week so rows are weekdays.
+    first = date.fromisoformat(days[0][0])
+    offset = (first.weekday() + 1) % 7
+    cells = [(offset + i) for i in range(len(days))]
+    weeks = (cells[-1] // 7) + 1
+    step, size = 20, 16
+    x0 = (1200 - weeks * step) // 2 + 2
+    y0 = 214
+    nonzero = sorted(c for _, c in days if c)
+    q = [nonzero[int(len(nonzero) * p)] if nonzero else 1 for p in (0.25, 0.5, 0.75)]
+
+    def level(c):
+        return 0 if not c else 1 + sum(c > v for v in q)
+
+    svg = Svg(1200, 404, f"{grouped(contrib['total'], lang)} {t['total']}")
+    backdrop(svg)
+    svg.styles.append(
+        "@keyframes ink{from{opacity:0;transform:translateY(5px)}}"
+        ".wk{animation:ink .6s cubic-bezier(.2,.7,.2,1) both}"
+        "@keyframes show{from{opacity:0}}.late{animation:show .6s ease 1.7s both}"
+        "@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}"
+        ".arrow{stroke-dasharray:1;animation:draw .8s cubic-bezier(.65,0,.35,1) 1.5s both}"
+        "@keyframes ping{0%{transform:scale(1);opacity:.8}80%,100%{transform:scale(2.2);opacity:0}}"
+        ".ping{transform-box:fill-box;transform-origin:center;animation:ping 2.4s cubic-bezier(0,0,.2,1) 2s infinite both}"
+        "@media (prefers-reduced-motion:reduce){.wk,.late,.arrow,.ping{animation:none}.ping{opacity:0}}"
+    )
+
+    total = grouped(contrib["total"], lang)
+    svg.text(64, 106, total, SERIF, 58, C["ink"])
+    svg.text(64 + SERIF.width(total, 58) + 16, 104, t["total"], BODY, 19, C["soft"])
+    for i, (label, value) in enumerate(((t["longest"], stats["longest"]), (t["current"], stats["current"]))):
+        y = 78 + i * 28
+        svg.text(1136, y, [(f"{label}  ", C["muted"]), (f"{value} {t['days']}", C["ink"])], BODY, 16, text_anchor="end")
+
+    fills = ["#ffffff", C["accent"], C["accent"], C["accent"], C["accent"]]
+    opacity = [0.06, 0.3, 0.55, 0.8, 1]
+    for week in range(weeks):
+        rects = ""
+        for i, cell in enumerate(cells):
+            if cell // 7 != week:
+                continue
+            lv = level(days[i][1])
+            rects += el("rect", x=x0 + week * step, y=y0 + (cell % 7) * step, width=size, height=size, rx=4, fill=fills[lv], fill_opacity=opacity[lv])
+        svg.add(el("g", rects, class_="wk", style=f"animation-delay:{week * 26}ms"))
+
+    # Month names under the first column that starts a new month.
+    seen = set()
+    for i, (iso, _) in enumerate(days):
+        d = date.fromisoformat(iso)
+        week = cells[i] // 7
+        if d.day <= 7 and (d.year, d.month) not in seen and week < weeks - 1:
+            seen.add((d.year, d.month))
+            svg.text(x0 + week * step, y0 + 7 * step + 22, t["months"][d.month - 1], BODY, 13, C["muted"])
+
+    # Today: a ring that keeps breathing.
+    today = cells[-1]
+    tx, ty = x0 + (today // 7) * step + size / 2, y0 + (today % 7) * step + size / 2
+    svg.add(el("rect", x=num(tx - 11), y=num(ty - 11), width=22, height=22, rx=7, fill="none", stroke=C["accent"], stroke_width=1.5, class_="ping"))
+
+    # Hand-written note with a curved arrow to the busiest day.
+    b = stats["busiest"]
+    bd = date.fromisoformat(days[b][0])
+    bx, by = x0 + (cells[b] // 7) * step + size / 2, y0 + (cells[b] % 7) * step
+    note = t["busiest"].format(count=days[b][1], date=f"{bd.day} {t['months'][bd.month - 1]}")
+    note_w = SERIF_IT.width(note, 19)
+    right_side = bx < 600
+    nx = bx + 34 if right_side else bx - 34 - note_w
+    ny = 174
+    sx = nx - 8 if right_side else nx + note_w + 8
+    svg.text(num(nx), ny, note, SERIF_IT, 19, C["soft"], class_="late")
+    d = f"M{num(sx)} {ny - 6}C{num(bx + (sx - bx) * 0.35)} {ny - 8} {num(bx)} {ny + 2} {num(bx)} {num(by - 6)}"
+    svg.add(
+        el("path", d=d, pathLength=1, fill="none", stroke=C["accent"], stroke_width=1.6, stroke_linecap="round", class_="arrow"),
+        el("path", d=f"M{num(bx - 4)} {num(by - 11)}L{num(bx)} {num(by - 5)}L{num(bx + 4)} {num(by - 11)}", fill="none", stroke=C["accent"], stroke_width=1.6, stroke_linecap="round", stroke_linejoin="round", class_="late"),
+    )
+    return svg
+
+
+def window_lit(week, row, col, pct):
+    # Stable pseudo-random pattern: the same data always lights the same windows.
+    return (week * 7919 + row * 104729 + col * 1299709) % 100 < pct
+
+
+def skyline(lang, contrib):
+    """Weekly totals as buildings over the water: height and lit windows grow with contributions."""
+    t = GRAPH_TEXT[lang]
+    days = contrib["days"]
+    first = date.fromisoformat(days[0][0])
+    offset = (first.weekday() + 1) % 7
+    weekly = {}
+    for i, (_, c) in enumerate(days):
+        weekly[(offset + i) // 7] = weekly.get((offset + i) // 7, 0) + c
+    totals = [weekly[w] for w in sorted(weekly)]
+    peak = max(totals) or 1
+    step, bw, depth = 20, 14, 6
+    x0 = (1200 - len(totals) * step) // 2
+    base = 318
+    svg = Svg(1200, 430, f"{t['city']}. {t['busiest_week']}: {peak}")
+    backdrop(svg)
+    # A hazy far layer across the whole width, so quiet months still read as a city at night.
+    far = ""
+    for i in range(len(totals) * 2):
+        fh = 22 + (i * 7919 % 97) / 97 * 70
+        fx = x0 - 6 + i * step / 2
+        far += f"M{num(fx)} {base}V{num(base - fh)}h{num(step / 2 - 1)}V{base}z"
+    svg.add(el("path", d=far, fill="#ffffff", fill_opacity=0.045))
+    svg.styles.append(
+        "@keyframes rise{from{transform:scaleY(0)}}"
+        ".bld{transform-box:fill-box;transform-origin:bottom;animation:rise .9s cubic-bezier(.2,.7,.2,1) both}"
+        "@keyframes show{from{opacity:0}}.lights{animation:show .8s ease 1.3s both}"
+        "@keyframes flicker{0%,100%{opacity:1}45%{opacity:.25}55%{opacity:.9}}"
+        ".tw{animation:flicker 3.2s ease-in-out infinite}"
+        "@keyframes drift{from{transform:translateX(-14px)}to{transform:translateX(14px)}}"
+        ".rip{animation:drift 6s ease-in-out infinite alternate}"
+        "@media (prefers-reduced-motion:reduce){.bld,.tw,.rip,.lights{animation:none}}"
+    )
+    svg.text(64, 76, t["city"], SERIF_IT, 24, C["ink"])
+    svg.text(64, 104, t["city_note"], BODY, 15, C["muted"])
+    svg.text(1136, 76, [(f"{t['busiest_week']}  ", C["muted"]), (str(peak), C["ink"])], BODY, 16, text_anchor="end")
+
+    lit, twinkle, mirror = [], [], ""
+    for w, total in enumerate(totals):
+        share = total / peak
+        h = 5 if not total else 14 + (share ** 0.7) * 176
+        x, y = x0 + w * step, base - h
+        body = (
+            el("polygon", points=f"{x + bw},{num(y)} {x + bw + depth},{num(y - 4)} {x + bw + depth},{base - 4} {x + bw},{base}", fill="#15120f")
+            + el("polygon", points=f"{x},{num(y)} {x + depth},{num(y - 4)} {x + bw + depth},{num(y - 4)} {x + bw},{num(y)}", fill="#5a4a3d")
+            + el("rect", x=x, y=num(y), width=bw, height=num(h), fill="url(#facade)")
+        )
+        svg.add(el("g", body, class_="bld", style=f"animation-delay:{w * 22}ms"))
+        mirror += el("rect", x=x, y=base, width=bw, height=num(h * 0.55), fill="#1d1916")
+        if not total:
+            continue
+        pct = 30 + 62 * share
+        rows = int((h - 10) // 7)
+        for r in range(rows):
+            for col, wx in enumerate((x + 3, x + 8)):
+                if window_lit(w, r, col, pct):
+                    rect = f"M{wx} {num(y + 6 + r * 7)}h3v3h-3z"
+                    (twinkle if (w * 31 + r * 7 + col) % 23 == 0 else lit).append(rect)
+    svg.defs.append(
+        el("linearGradient", el("stop", offset=0, stop_color="#3d342c") + el("stop", offset=1, stop_color="#221d19"), id="facade", x1=0, y1=0, x2=0, y2=1)
+    )
+    svg.add(el("g", el("path", d="".join(lit), fill="#f4b884", fill_opacity=0.85) + el("path", d="".join(twinkle), fill="#ffd2a6", class_="tw"), class_="lights"))
+    # The water: a faded mirror image and a few slow ripples.
+    svg.defs.append(
+        el("linearGradient", el("stop", offset=0, stop_color="#fff", stop_opacity=0.5) + el("stop", offset=1, stop_color="#fff", stop_opacity=0), id="fadew", x1=0, y1=0, x2=0, y2=1)
+    )
+    svg.defs.append(el("mask", el("rect", x=0, y=base, width=1200, height=110, fill="url(#fadew)"), id="water"))
+    svg.add(el("g", mirror + el("path", d="".join(lit), fill="#f4b884", fill_opacity=0.5, transform=f"translate(0 {2 * base}) scale(1 -1)"), mask="url(#water)"))
+    svg.add(el("path", d=f"M64 {base}H1136", stroke=C["line_strong"]))
+    ripples = "".join(
+        el("path", d=f"M{120 + (i * 173) % 900} {base + 14 + i * 11}h{60 + (i * 37) % 80}", stroke="#ffffff", stroke_opacity=0.08, stroke_linecap="round")
+        for i in range(7)
+    )
+    svg.add(el("g", ripples, class_="rip"))
+    return svg
+
+
 def fetch_live():
     # PROFILE_TOKEN (fine-grained, read-only metadata on my repos) lets private pushes count for "latest push".
     # Without it only public repos are visible: the workflow's GITHUB_TOKEN cannot see other repos.
@@ -570,13 +785,37 @@ def fetch_live():
     }
 
 
+def fetch_contributions():
+    """Daily contribution counts for the last year. Counts only: no repository names, so private work stays private."""
+    token = os.environ.get("PROFILE_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    if token:
+        query = '{user(login:"%s"){contributionsCollection{contributionCalendar{totalContributions weeks{contributionDays{date contributionCount}}}}}}' % USER
+        request = urllib.request.Request(
+            "https://api.github.com/graphql",
+            data=json.dumps({"query": query}).encode(),
+            headers={"Authorization": f"Bearer {token}", "User-Agent": f"{USER}-profile-builder"},
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=20) as response:
+                calendar = json.load(response)["data"]["user"]["contributionsCollection"]["contributionCalendar"]
+            days = [[d["date"], d["contributionCount"]] for w in calendar["weeks"] for d in w["contributionDays"]]
+            return {"total": calendar["totalContributions"], "days": days}
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            print(f"Contributions unavailable ({error}), using {CONTRIB.relative_to(ROOT)}")
+    return json.loads(CONTRIB.read_text())
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     live = fetch_live()
     LIVE.write_text(json.dumps(live, ensure_ascii=False, indent=2) + "\n")
+    contrib = fetch_contributions()
+    CONTRIB.write_text(json.dumps(contrib, separators=(",", ":")) + "\n")
     outputs = {}
     for lang in LANGS:
         outputs[f"hero.{lang}.svg"] = hero(lang, live)
+        outputs[f"graph.{lang}.svg"] = contribution_graph(lang, contrib)
+        outputs[f"city.{lang}.svg"] = skyline(lang, contrib)
         for index, project in enumerate(PROJECTS, start=1):
             outputs[f"card-{project['slug']}.{lang}.svg"] = card(project, index, lang)
         outputs[f"footer.{lang}.svg"] = footer(lang)

@@ -9,6 +9,10 @@
   <a href="https://github.com/m4rkellkka/Lumis"><img src="assets/profile/card-lumis.en.svg" width="49.5%" alt="Lumis — exam prep on local LLMs, side project" /></a>
 </p>
 
+<img src="assets/profile/graph.en.svg" width="100%" alt="Contribution graph for the last year, with the busiest day marked" />
+
+<img src="assets/profile/city.en.svg" width="100%" alt="A year of commits drawn as a city skyline over the Bosphorus: each building is a week" />
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/m4rkellkka/m4rkellkka/output/snake-dark.svg" />
   <img src="https://raw.githubusercontent.com/m4rkellkka/m4rkellkka/output/snake.svg" width="100%" alt="A snake eating my contribution graph" />
