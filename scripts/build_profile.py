@@ -665,103 +665,120 @@ def contribution_graph(lang, contrib):
     return svg
 
 
-# The cat from way-to-1111 as pixel art made of ASCII: every pixel is a square cell in its colour
-# with a glyph of the same hue on top, picked by brightness like the game picks its glyphs.
-# Bodies are drawn as left halves (the centre column last) and mirrored; tails are added after.
-CAT_HEAD = [
-    "..KK......",
-    "..KOK.....",
-    "..KOPK....",
-    ".KOOPOKKKK",
-    ".KOOOOOOOO",
-    ".KOTOOOTOO",
-    ".KOOOOOOOO",
-    ".KOKGGKOOO",
-    ".KOKGkKOOO",
-    ".KLOKKOOWP",
-    ".KLLOOWWWK",
-    "..KLOOWWWW",
-]
-CAT_HEAD_ASLEEP = CAT_HEAD[:7] + [".KOOOOOOOO", ".KOKKKOOOO"] + CAT_HEAD[9:]
-CAT_BODIES = {
+# The cat from way-to-1111 as small pixel art made of ASCII: every pixel is a square cell in its
+# colour with a faint glyph of the same hue on top. Reduced from smooth shapes (scripts/profile/make_cat_art.py),
+# facing right; orange areas
+# get a lighter top edge and a darker bottom edge automatically, so the shape reads round.
+CAT_ART = {
     "sit": [
-        "..KOOOOWWW",
-        ".KOOTOOWWW",
-        ".KOOOTOWWW",
-        ".KOTOOOWWW",
-        ".KOOOTOOWW",
-        ".KOOOOKWWW",
-        ".KOOOOKWWW",
-        ".KOOOKWWWK",
-        "..KKKKKKKK",
+        "...........K.......K..",
+        "..........KOK.....KOK.",
+        "..........KOPKKKKKPPK.",
+        "..........KOPOOOOOPPK.",
+        "..........KOOOOOOOOOK.",
+        "..........KOOOOOOOOOK.",
+        "..........KOOKKOOKOOK.",
+        ".........KOOOKKOOKOOOK",
+        "..........KOOOWPWOOOK.",
+        "..........KOOOWWWWOOK.",
+        "........KKKOOOWWWOOK..",
+        ".......KOOOOOOOOOOK...",
+        "......KOOOOOOOWWWWK...",
+        "...KK.KOOOOOOOWWWWWK..",
+        "..KOOKOOOOOOOOWWWWWK..",
+        "..KOOKOOOOOOOOWWWWWK..",
+        ".KOOKKOOOOOOOOOWWWOK..",
+        ".KOOKKOOOOOOOOOWWOK...",
+        "..KOOKKOOOOOOOOOOOK...",
+        "..KOOOOOOOOOOOOOOOK...",
+        "...KOOOKKOOOOWWWWWWK..",
+        "....KKK..KKKKWWKKWK...",
+        ".............KK..K....",
     ],
     "jump": [
-        "..KOOOOWWW",
-        ".KOOTOOWWW",
-        "KOOOOTOWWW",
-        "KOOTOOOWWW",
-        ".KOOOOOWWW",
-        "..KOKKOOKK",
-        "..KWK.KWK.",
-        "..KWK.KWK.",
-        "...K...K..",
+        "..................K.....K..",
+        ".................KOK...KOK.",
+        ".KK..............KPPKKKOPK.",
+        "KOOK.............KOOOOOOPK.",
+        "KOOK.............KOOOOOOOOK",
+        ".KOOK...........KOOKKOOKOOK",
+        ".KOOK.....KKKK..KOOKKOOKOOK",
+        ".KOOOK.KKKOOOOKKKOOOWPWOOK.",
+        "..KOOOKOOOOOOOOOOOOOWWWWOK.",
+        "...KOOOOOOOOOOOOOOOOWWWWK..",
+        "....KOOOOOOOOOOOOOOOKKKK...",
+        "....KOOOOOOOOOOOWWWWK......",
+        ".....KOOOOOOOOOOWWWWK......",
+        "....KOOOOOOOOOOOOWWOOKK....",
+        "..KKOOOKKKKKKKKKKKKOOOWK...",
+        ".KWWOOK............KKWWWK..",
+        ".KWWKK...............KKK...",
+        "..KK.......................",
     ],
     "sleep": [
-        ".KOOOOOWWW",
-        "KOOTOOOOWW",
-        "KOOOTOOOOO",
-        "KOOOOOOOOO",
-        ".KKKKKKKKK",
+        "..............K.....K....",
+        ".............KOK...KOK...",
+        ".............KPOKKKOPK...",
+        ".........KKKKKPOOOOOPK...",
+        "......KKKOOOOOOOOOOOOOK..",
+        "....KKOOOOOOOOOOOOOOOOK..",
+        "...KOOOOOOOOOOOOOOOOOOK..",
+        "...KOOOOOOOOOOOKKOKKKOK..",
+        "..KOOOOOOOOOOOOOWPPWOOK..",
+        "...KOOOOOOOOOOOOWWWWOK...",
+        "...KOOOOOOOOOOOOOWWOK....",
+        "....KOOOOOOOOOOOOOOK.....",
+        ".....KOOOOOOOOOOKKK......",
+        "......KKKOOOOOOOK........",
+        ".........KKKKKKK.........",
     ],
 }
-# (row from the top, column, colour) added to the right of the 19-wide body
-CAT_TAILS = {
-    "sit": [(16, 19, "K"), (17, 19, "O"), (17, 20, "K"), (18, 19, "O"), (18, 20, "D"), (18, 21, "K"),
-            (19, 18, "O"), (19, 19, "O"), (19, 20, "D"), (19, 21, "K"), (20, 17, "K"), (20, 18, "K"), (20, 19, "K"), (20, 20, "K")],
-    "jump": [(12, 19, "K"), (12, 20, "K"), (13, 18, "O"), (13, 19, "O"), (13, 20, "D"), (13, 21, "K"),
-             (14, 18, "O"), (14, 19, "K"), (11, 20, "K"), (11, 21, "D"), (10, 21, "K"), (10, 22, "K")],
-    "sleep": [(14, 19, "O"), (14, 20, "D"), (14, 21, "K"), (15, 19, "O"), (15, 20, "O"), (15, 21, "K"), (16, 18, "K"), (16, 19, "K"), (16, 20, "K")],
-}
 CAT_PALETTE = {
-    "K": ("#2b1b12", ":"), "D": ("#7a3f1b", "="), "O": ("#c96d2e", "+"), "L": ("#e89552", "*"),
-    "T": ("#9c4f20", "="), "W": ("#f2e4cf", "#"), "P": ("#e98e8e", "o"), "G": ("#9ccf6a", "O"), "k": ("#10100e", "."),
+    "K": ("#3a2416", ":"), "D": ("#9a5224", "="), "O": ("#d27a38", "+"), "L": ("#eda05e", "*"),
+    "T": ("#a85a26", "="), "W": ("#f4e8d6", "#"), "P": ("#ea9a96", "o"),
 }
 
 
-def lighten(hex_colour, amount=0.32):
+def lighten(hex_colour, amount=0.3):
     r, g, b = (int(hex_colour[i:i + 2], 16) for i in (1, 3, 5))
     return "#" + "".join(f"{round(v + (255 - v) * amount):02x}" for v in (r, g, b))
 
 
 def cat_pixels(pose):
-    head = CAT_HEAD_ASLEEP if pose == "sleep" else CAT_HEAD
-    rows = [half + half[-2::-1] for half in head + CAT_BODIES[pose]]
-    grid = [list(row.ljust(24, ".")) for row in rows]
-    for r, c, colour in CAT_TAILS[pose]:
-        while r >= len(grid):
-            grid.append(list("." * 24))
-        grid[r][c] = colour
-    return grid
+    rows = CAT_ART[pose]
+    width = max(len(r) for r in rows)
+    grid = [list(r.ljust(width, ".")) for r in rows]
+    shaded = [row[:] for row in grid]
+    for r, row in enumerate(grid):
+        for c, px in enumerate(row):
+            if px != "O":
+                continue
+            # only the outer outline counts as an edge, so the eyes don't get a light rim
+            def outer(y):
+                return not 0 <= y < len(grid) or grid[y][c] == "." or (grid[y][c] == "K" and (not 0 <= 2 * y - r < len(grid) or grid[2 * y - r][c] == "."))
+            if outer(r - 1):
+                shaded[r][c] = "L"
+            elif outer(r + 1):
+                shaded[r][c] = "D"
+    return shaded
 
 
-def cat_sprite(svg, pose, cell=3.6):
-    """Pixel-art cat anchored at its bottom centre (0, 0) of the 19-wide body."""
+def cat_sprite(svg, pose, cell=2.7):
+    """Pixel-art cat anchored at its bottom centre (0, 0)."""
     grid = cat_pixels(pose)
-    left, top = -9.5 * cell, -len(grid) * cell
-    paths, texts = {}, {}
+    width = len(grid[0])
+    left, top = -width * cell / 2, -len(grid) * cell
+    paths = {}
     for r, row in enumerate(grid):
         for c, colour in enumerate(row):
-            if colour == ".":
-                continue
-            x, y = left + c * cell, top + r * cell
-            paths.setdefault(colour, []).append(f"M{num(x)} {num(y)}h{num(cell)}v{num(cell)}h{num(-cell)}z")
+            if colour != ".":
+                paths.setdefault(colour, []).append(f"M{num(left + c * cell)} {num(top + r * cell)}h{num(cell)}v{num(cell)}h{num(-cell)}z")
     out = "".join(el("path", d="".join(d), fill=CAT_PALETTE[k][0]) for k, d in paths.items())
-    size = cell / 0.6  # JetBrains Mono advance is 0.6 em, so one glyph per pixel
-    glyph_rows = ""
+    size = cell / 0.6  # JetBrains Mono advance is 0.6 em: one glyph per pixel
     for r, row in enumerate(grid):
         spans, prev = [], None
         for colour in row:
-            glyph, fill = (" ", None) if colour == "." else (CAT_PALETTE[colour][1], lighten(CAT_PALETTE[colour][0]))
+            glyph, fill = (" ", None) if colour in ".K" else (CAT_PALETTE[colour][1], lighten(CAT_PALETTE[colour][0]))
             if spans and fill == prev:
                 spans[-1][0] += glyph
             else:
@@ -772,8 +789,8 @@ def cat_sprite(svg, pose, cell=3.6):
             continue
         svg.chars.setdefault(MONO.family, set()).update(text)
         inner = "".join(el("tspan", escape(t), fill=f) if f else escape(t) for t, f in spans)
-        glyph_rows += el("text", inner, x=num(left), y=num(top + r * cell + cell * 0.82), class_=MONO.family, font_size=num(size), fill_opacity=0.55)
-    return out + glyph_rows
+        out += el("text", inner, x=num(left), y=num(top + r * cell + cell * 0.82), class_=MONO.family, font_size=num(size), fill_opacity=0.4)
+    return out
 
 
 def quad_length(p0, c, p1, steps=16):
@@ -833,8 +850,8 @@ def roof_cat(svg, roofs, totals):
         art = cat_sprite(svg, pose)
         if pose == "sleep":
             svg.chars.setdefault(SERIF_IT.family, set()).update("zZ")
-            art += el("text", "z", x=30, y=-62, class_=f"{SERIF_IT.family} zz", font_size=10, fill=C["soft"])
-            art += el("text", "Z", x=40, y=-76, class_=f"{SERIF_IT.family} zz z2", font_size=13, fill=C["soft"])
+            art += el("text", "z", x=20, y=-36, class_=f"{SERIF_IT.family} zz", font_size=10, fill=C["soft"])
+            art += el("text", "Z", x=28, y=-48, class_=f"{SERIF_IT.family} zz z2", font_size=13, fill=C["soft"])
         flip = ' transform="scale(-1 1)"' if facing == "l" else ""
         groups += f"<g opacity=\"0\"{flip}>{show}{art}</g>"
     svg.styles.append(
