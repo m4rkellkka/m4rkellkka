@@ -662,34 +662,147 @@ def contribution_graph(lang, contrib):
         el("path", d=f"M{num(bx - 4)} {num(by - 11)}L{num(bx)} {num(by - 5)}L{num(bx + 4)} {num(by - 11)}", fill="none", stroke=C["accent"], stroke_width=1.6, stroke_linecap="round", stroke_linejoin="round", class_="late"),
     )
 
-    # A small ASCII cat hops along the top of the graph, on the side away from the note.
-    lo, hi = min(nx, sx) - 56, max(nx + note_w, bx) + 34
-    spans = [(x0 + 30, lo), (hi, x0 + weeks * step - 30)]
-    a, b = max(spans, key=lambda span: span[1] - span[0])
-    ground = y0 - 4
-    hops = max(2, int((b - a) // 72))
-    xs = [(b - a) * i / hops for i in range(hops + 1)]
-    route = xs + xs[-2::-1]
-    path = "M0 0"
-    for i, (p0, p1) in enumerate(zip(route, route[1:])):
-        lift = 26 + (i * 5 % 3) * 9
-        path += f"Q{num((p0 + p1) / 2)} {-2 * lift} {num(p1)} 0"
-
-    def cat(eyes=True):
-        lines = [(" /\\_/\\ ", -39, None), ("( o.o )", -22, "eo" if eyes else None), (" > ^ < ", -5, None)]
-        if eyes:
-            lines.append(("( -.- )", -22, "ec"))
-        out = ""
-        for text, y, extra in lines:
-            svg.chars.setdefault(MONO.family, set()).update(text)
-            css = f"{MONO.family} {extra}" if extra else MONO.family
-            out += el("text", escape(text), x=0, y=y, class_=css, font_size=16, fill=C["ink"], text_anchor="middle")
-        return out
-
-    motion = el("animateMotion", path=path, dur=f"{num(len(route) * 0.85)}s", begin="2.2s", repeatCount="indefinite")
-    svg.add(el("g", el("g", cat() + motion), transform=f"translate({num(a)} {ground})", class_="cat"))
-    svg.add(el("g", cat(eyes=False), transform=f"translate({num(a)} {ground})", class_="cat-still"))
     return svg
+
+
+# The cat from way-to-1111, drawn the way that game draws everything: density glyphs (" .:-=+*#")
+# picked from brightness, each cell tinted with the surface colour. Digits are brightness 1-7,
+# E = eye, N = nose, any other character is drawn as is.
+CAT_SPRITES = {
+    "sit": [
+        "         /\\_/\\   ",
+        "        (7E77E7)  ",
+        "      -=\\6N6/=-  ",
+        "        1467641   ",
+        "       256747652  ",
+        "   1   4567476751 ",
+        "  23  145674767541",
+        "   23334567 7654  ",
+        "     2333 55 55   ",
+    ],
+    "jump": [
+        "                 /\\_/\\  ",
+        "  13           (7E77E7) ",
+        "   43        1456N676/= ",
+        "    4567476747674765    ",
+        "     45674767476765     ",
+        "    34  456    456 4    ",
+        "   3    3        3      ",
+    ],
+    "sleep": [
+        "           /\\_/\\     ",
+        "   12333  (7-77-7)    ",
+        "  34     4567N765     ",
+        "  4    145674767476541",
+        "   43345674767476765  ",
+        "     23444444444443   ",
+    ],
+}
+CAT_INK = {"1": "#3a2414", "2": "#5a3418", "3": "#7a4520", "4": "#9a5a2a", "5": "#b86f38", "6": "#d48a4c", "7": "#efae72"}
+CAT_GLYPH = dict(zip("1234567", ".:-=+*#"))
+
+
+def cat_sprite(svg, pose, size=7.5):
+    """Sprite text anchored at its bottom centre (0, 0)."""
+    rows = CAT_SPRITES[pose]
+    cell = MONO.width("0", size)
+    width = max(len(r) for r in rows) * cell
+    out = ""
+    for i, row in enumerate(rows):
+        spans, prev = [], None
+        for ch in row:
+            if ch == " ":
+                glyph, colour = " ", None
+            elif ch in CAT_GLYPH:
+                glyph, colour = CAT_GLYPH[ch], CAT_INK[ch]
+            elif ch == "E":
+                glyph, colour = "o", "#f4e08a"
+            elif ch == "N":
+                glyph, colour = "v", "#e9a0a0"
+            else:
+                glyph, colour = ch, "#c98048"
+            if spans and colour == prev:
+                spans[-1][0] += glyph
+            else:
+                spans.append([glyph, colour])
+                prev = colour
+        svg.chars.setdefault(MONO.family, set()).update(row.replace("E", "o").replace("N", "v").translate(str.maketrans(CAT_GLYPH)))
+        inner = "".join(el("tspan", escape(t), fill=c) if c else escape(t) for t, c in spans)
+        y = -(len(rows) - 1 - i) * size - 1
+        out += el("text", inner, x=num(-width / 2), y=num(y), class_=MONO.family, font_size=num(size))
+    return out
+
+
+def quad_length(p0, c, p1, steps=16):
+    total, prev = 0.0, p0
+    for i in range(1, steps + 1):
+        t = i / steps
+        pt = ((1 - t) ** 2 * p0[0] + 2 * (1 - t) * t * c[0] + t * t * p1[0], (1 - t) ** 2 * p0[1] + 2 * (1 - t) * t * c[1] + t * t * p1[1])
+        total += math.hypot(pt[0] - prev[0], pt[1] - prev[1])
+        prev = pt
+    return total
+
+
+def roof_cat(svg, roofs, totals):
+    """The cat hops along the roofs, sits for a moment on each stop and sleeps through long quiet spells."""
+    stops, w = [], 0
+    while w < len(totals):
+        if totals[w] == 0:
+            j = w
+            while j < len(totals) and totals[j] == 0:
+                j += 1
+            if j - w >= 4:
+                stops.append(((w + j) // 2, "sleep"))
+            w = j
+            continue
+        stops.append((w, "sit"))
+        w += 4 + (w * 7) % 3
+    route = stops + stops[-2::-1]
+    events = [(0.0, 0.0)]  # (time, distance along the path)
+    segments = []  # (start time, pose, facing)
+    path = f"M{num(roofs[route[0][0]][0])} {num(roofs[route[0][0]][1])}"
+    t = d = 0.0
+    for k, (week, pose) in enumerate(route):
+        nxt = route[k + 1][0] if k + 1 < len(route) else None
+        facing = "r" if nxt is None or roofs[nxt][0] >= roofs[week][0] else "l"
+        segments.append((t, pose, "r" if pose == "sleep" else facing))
+        t += 7.0 if pose == "sleep" else 2.4
+        events.append((t, d))
+        if nxt is None:
+            break
+        (x1, y1), (x2, y2) = roofs[week], roofs[nxt]
+        c = ((x1 + x2) / 2, min(y1, y2) - 44 - 0.12 * abs(x2 - x1))
+        path += f"Q{num(c[0])} {num(c[1])} {num(x2)} {num(y2)}"
+        segments.append((t, "jump", facing))
+        t += 0.55 + abs(x2 - x1) / 700
+        d += quad_length((x1, y1), c, (x2, y2))
+        events.append((t, d))
+    total_t, total_d = t, d or 1
+    key_times = ";".join(num(round(e[0] / total_t, 4)) for e in events)
+    key_points = ";".join(num(round(e[1] / total_d, 4)) for e in events)
+    motion = el("animateMotion", path=path, dur=f"{num(round(total_t, 2))}s", keyTimes=key_times, keyPoints=key_points, calcMode="linear", repeatCount="indefinite")
+
+    times = ";".join(num(round(s[0] / total_t, 4)) for s in segments)
+    groups = ""
+    for pose, facing in (("sit", "r"), ("sit", "l"), ("jump", "r"), ("jump", "l"), ("sleep", "r")):
+        values = ";".join("1" if (s[1], s[2]) == (pose, facing) else "0" for s in segments)
+        show = el("animate", attributeName="opacity", values=values, keyTimes=times, dur=f"{num(round(total_t, 2))}s", calcMode="discrete", repeatCount="indefinite")
+        art = cat_sprite(svg, pose)
+        if pose == "sleep":
+            svg.chars.setdefault(SERIF_IT.family, set()).update("zZ")
+            art += el("text", "z", x=24, y=-38, class_=f"{SERIF_IT.family} zz", font_size=10, fill=C["soft"])
+            art += el("text", "Z", x=32, y=-50, class_=f"{SERIF_IT.family} zz z2", font_size=13, fill=C["soft"])
+        flip = ' transform="scale(-1 1)"' if facing == "l" else ""
+        groups += f"<g opacity=\"0\"{flip}>{show}{art}</g>"
+    svg.styles.append(
+        "@keyframes zz{0%{opacity:0;transform:translate(0,4px)}30%{opacity:.9}100%{opacity:0;transform:translate(6px,-10px)}}"
+        ".zz{animation:zz 2.6s ease-out infinite}.z2{animation-delay:1.3s}"
+        ".cat-still{display:none}"
+        "@media (prefers-reduced-motion:reduce){.cat{display:none}.cat-still{display:inline}.zz{animation:none}}"
+    )
+    svg.add(el("g", groups + motion, class_="cat"))
+    first = roofs[stops[0][0]]
+    svg.add(el("g", cat_sprite(svg, "sit"), transform=f"translate({num(first[0])} {num(first[1])})", class_="cat-still"))
 
 
 def window_lit(week, row, col, pct):
@@ -739,11 +852,12 @@ def skyline(lang, contrib):
     svg.text(64, 104, t["city_note"], BODY, 15, C["muted"])
     svg.text(1136, 76, [(f"{t['busiest_week']}  ", C["muted"]), (str(peak), C["ink"])], BODY, 16, text_anchor="end")
 
-    groups, mirror = {}, ""
+    groups, mirror, roofs = {}, "", []
     for w, total in enumerate(totals):
         share = total / peak
         h = 5 if not total else 14 + (share ** 0.7) * 176
         x, y = x0 + w * step, base - h
+        roofs.append((x + bw / 2 + 3, y - 4))
         body = (
             el("polygon", points=f"{x + bw},{num(y)} {x + bw + depth},{num(y - 4)} {x + bw + depth},{base - 4} {x + bw},{base}", fill="#15120f")
             + el("polygon", points=f"{x},{num(y)} {x + depth},{num(y - 4)} {x + bw + depth},{num(y - 4)} {x + bw},{num(y)}", fill="#5a4a3d")
@@ -786,6 +900,7 @@ def skyline(lang, contrib):
         for i in range(7)
     )
     svg.add(el("g", ripples, class_="rip"))
+    roof_cat(svg, roofs, totals)
     return svg
 
 
