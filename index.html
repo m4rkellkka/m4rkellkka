@@ -754,6 +754,156 @@
         font-size: 0.875rem;
       }
 
+      /* City: a year of contributions as a skyline, drawn from assets/profile/contributions.json */
+      :root {
+        --city-front: oklch(0.34 0.016 60);
+        --city-side: oklch(0.25 0.012 60);
+        --city-roof: oklch(0.46 0.02 60);
+        --city-window: oklch(0.82 0.11 70);
+        --city-haze: oklch(0.23 0.012 60 / 0.07);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --city-front: oklch(0.31 0.012 60);
+          --city-side: oklch(0.21 0.01 60);
+          --city-roof: oklch(0.43 0.02 60);
+          --city-window: oklch(0.84 0.1 65);
+          --city-haze: oklch(1 0 0 / 0.05);
+        }
+      }
+
+      .city {
+        padding-bottom: clamp(40px, 6vw, 64px);
+      }
+
+      .city[hidden] {
+        display: none;
+      }
+
+      .city-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 4px 24px;
+        margin-bottom: 14px;
+      }
+
+      .city-title {
+        font-size: clamp(1.125rem, 2vw, 1.375rem);
+      }
+
+      .city-note {
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+
+      .city-frame {
+        position: relative;
+      }
+
+      .city-svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+        touch-action: manipulation;
+      }
+
+      .city-svg .bld {
+        transform-box: fill-box;
+        transform-origin: bottom;
+        transform: scaleY(0);
+        transition: transform 900ms cubic-bezier(0.2, 0.7, 0.2, 1);
+      }
+
+      .city-svg.grown .bld {
+        transform: none;
+      }
+
+      .city-svg .front {
+        fill: var(--city-front);
+        transition: fill 160ms ease;
+      }
+
+      .city-svg .bld.on .front {
+        fill: var(--accent);
+      }
+
+      .city-svg .reflection {
+        opacity: 0.06;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .city-svg .reflection {
+          opacity: 0.16;
+        }
+      }
+
+      .city-svg .lights {
+        fill: var(--city-window);
+        opacity: 0;
+        transition: opacity 800ms ease 900ms;
+      }
+
+      .city-svg.grown .lights {
+        opacity: 1;
+      }
+
+      @keyframes off {
+        0%, 36% { opacity: 1; }
+        40%, 68% { opacity: 0; }
+        72%, 100% { opacity: 1; }
+      }
+
+      @keyframes on {
+        0%, 42% { opacity: 0; }
+        46%, 80% { opacity: 1; }
+        84%, 100% { opacity: 0; }
+      }
+
+      .city-svg .off0 { animation: off 9s ease-in-out -1s infinite; }
+      .city-svg .off1 { animation: off 13s ease-in-out -6s infinite; }
+      .city-svg .on0 { animation: on 8s ease-in-out -3s infinite; }
+      .city-svg .on1 { animation: on 12s ease-in-out -7s infinite; }
+
+      .city-tip {
+        position: absolute;
+        z-index: 2;
+        padding: 6px 10px;
+        border-radius: 8px;
+        background: var(--ink);
+        color: var(--paper);
+        font-size: 0.8125rem;
+        line-height: 1.3;
+        white-space: nowrap;
+        pointer-events: none;
+        transform: translate(-50%, calc(-100% - 10px));
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .city-svg .bld {
+          transform: none;
+        }
+
+        .city-svg .lights {
+          opacity: 1;
+        }
+
+        .city-svg .off0,
+        .city-svg .off1,
+        .city-svg .on0,
+        .city-svg .on1 {
+          animation: none;
+        }
+
+        .city-svg .on0,
+        .city-svg .on1 {
+          opacity: 0;
+        }
+      }
+
       /* Narrow screens */
       @media (max-width: 860px) {
         .hero {
@@ -933,6 +1083,23 @@
             <figcaption><span lang="en">Istanbul, 2026</span><span lang="ru">Стамбул, 2026</span></figcaption>
           </div>
         </figure>
+      </section>
+
+      <section class="wrap city" id="city-section" aria-labelledby="city-title" hidden>
+        <div class="city-head">
+          <p class="city-title" id="city-title">
+            <em lang="en">A year of commits, as a skyline over the Bosphorus</em>
+            <em lang="ru">Год коммитов — силуэт города над Босфором</em>
+          </p>
+          <p class="city-note">
+            <span lang="en">Each building is a week. Hover or tap one.</span>
+            <span lang="ru">Каждое здание — неделя. Наведите или нажмите.</span>
+          </p>
+        </div>
+        <div class="city-frame">
+          <svg class="city-svg" id="city" role="img" aria-label="Contributions per week over the last year"></svg>
+          <div class="city-tip" id="city-tip" hidden></div>
+        </div>
       </section>
 
       <section class="wrap section" id="work" aria-labelledby="work-title">
@@ -1424,6 +1591,140 @@
           );
           observer.observe(screen);
         }
+      })();
+    </script>
+    <script>
+      // The skyline: one building per week of contributions, same data the README city uses.
+      (function () {
+        var section = document.getElementById("city-section");
+        var svg = document.getElementById("city");
+        var tip = document.getElementById("city-tip");
+        var NS = "http://www.w3.org/2000/svg";
+        var STEP = 20, BW = 14, DEPTH = 6, BASE = 200, TALL = 168;
+
+        function node(tag, attrs, parent) {
+          var el = document.createElementNS(NS, tag);
+          for (var key in attrs) el.setAttribute(key, attrs[key]);
+          if (parent) parent.appendChild(el);
+          return el;
+        }
+
+        function lit(week, row, col, pct) {
+          return (week * 7919 + row * 104729 + col * 1299709) % 100 < pct;
+        }
+
+        function label(lang, start, count) {
+          var day = new Intl.DateTimeFormat(lang === "ru" ? "ru-RU" : "en-GB", { day: "numeric", month: "short", timeZone: "UTC" }).format(start);
+          if (lang === "ru") {
+            var n10 = count % 10, n100 = count % 100;
+            var word = n10 === 1 && n100 !== 11 ? "контрибуция" : n10 >= 2 && n10 <= 4 && (n100 < 12 || n100 > 14) ? "контрибуции" : "контрибуций";
+            return "Неделя с " + day + " · " + count + " " + word;
+          }
+          return "Week of " + day + " · " + count + (count === 1 ? " contribution" : " contributions");
+        }
+
+        function draw(data) {
+          var first = new Date(data.days[0][0] + "T00:00:00Z");
+          var offset = first.getUTCDay(); // GitHub weeks start on Sunday
+          var weeks = [];
+          data.days.forEach(function (day, i) {
+            var w = Math.floor((offset + i) / 7);
+            weeks[w] = (weeks[w] || 0) + day[1];
+          });
+          var peak = Math.max.apply(null, weeks) || 1;
+          var width = weeks.length * STEP + DEPTH;
+          svg.setAttribute("viewBox", "0 -8 " + width + " " + (BASE + 52));
+
+          var haze = "";
+          for (var i = 0; i < weeks.length * 2; i++) {
+            var fh = 20 + ((i * 7919) % 97) / 97 * 64;
+            haze += "M" + (i * STEP / 2) + " " + BASE + "V" + (BASE - fh).toFixed(1) + "h" + (STEP / 2 - 1) + "V" + BASE + "z";
+          }
+          node("path", { d: haze, fill: "var(--city-haze)" }, svg);
+
+          var reflection = node("g", { class: "reflection", transform: "translate(0 " + 2 * BASE + ") scale(1 -1)" });
+          var groups = { lit: "", off0: "", off1: "", on0: "", on1: "" };
+          var buildings = [];
+          weeks.forEach(function (total, w) {
+            var share = total / peak;
+            var h = total ? 12 + Math.pow(share, 0.7) * TALL : 3;
+            var x = w * STEP, y = BASE - h;
+            var g = node("g", { class: "bld", style: "transition-delay:" + w * 18 + "ms" }, svg);
+            node("polygon", { points: [x + BW, y, x + BW + DEPTH, y - 4, x + BW + DEPTH, BASE - 4, x + BW, BASE].join(" "), fill: "var(--city-side)" }, g);
+            node("polygon", { points: [x, y, x + DEPTH, y - 4, x + BW + DEPTH, y - 4, x + BW, y].join(" "), fill: "var(--city-roof)" }, g);
+            node("rect", { class: "front", x: x, y: y, width: BW, height: h }, g);
+            node("rect", { x: x, y: BASE - h * 0.55, width: BW, height: h * 0.55, fill: "var(--city-front)" }, reflection);
+            buildings.push({ g: g, x: x, y: y, total: total, start: new Date(first.getTime() + (w * 7 - offset) * 864e5) });
+            if (!total) return;
+            var pct = 30 + 62 * share, rows = Math.floor((h - 10) / 7);
+            for (var r = 0; r < rows; r++) {
+              [x + 3, x + 8].forEach(function (wx, col) {
+                var mix = w * 7919 + r * 104729 + col * 1299709;
+                var d = "M" + wx + " " + (y + 6 + r * 7).toFixed(1) + "h3v3h-3z";
+                if (lit(w, r, col, pct)) groups[mix % 4 === 0 ? "off" + (mix % 2) : "lit"] += d;
+                else if (mix % 6 === 0) groups["on" + (mix % 2)] += d;
+              });
+            }
+          });
+          var lights = node("g", { class: "lights" }, svg);
+          Object.keys(groups).forEach(function (name) {
+            if (groups[name]) node("path", { d: groups[name], class: name === "lit" ? "" : name }, lights);
+          });
+          svg.appendChild(reflection);
+          node("path", { d: "M0 " + BASE + "H" + width, stroke: "var(--line-strong)", fill: "none" }, svg);
+
+          // Hover / tap: the building lights up and a note says which week it is.
+          var active = null;
+          function show(b) {
+            if (active) active.g.classList.remove("on");
+            active = b;
+            if (!b) {
+              tip.hidden = true;
+              return;
+            }
+            b.g.classList.add("on");
+            var box = svg.getBoundingClientRect(), scale = box.width / width;
+            tip.textContent = label(document.documentElement.dataset.lang, b.start, b.total);
+            tip.style.left = (b.x + BW / 2) * scale + "px";
+            tip.style.top = (b.y + 8) * scale + "px";
+            tip.hidden = false;
+          }
+          function pick(event) {
+            var box = svg.getBoundingClientRect();
+            var w = Math.floor(((event.clientX - box.left) / box.width) * width / STEP);
+            return buildings[Math.max(0, Math.min(buildings.length - 1, w))];
+          }
+          svg.addEventListener("pointermove", function (event) {
+            if (event.pointerType === "mouse") show(pick(event));
+          });
+          svg.addEventListener("pointerleave", function (event) {
+            if (event.pointerType === "mouse") show(null);
+          });
+          svg.addEventListener("pointerdown", function (event) {
+            if (event.pointerType !== "mouse") show(pick(event));
+          });
+          document.addEventListener("pointerdown", function (event) {
+            if (!svg.contains(event.target)) show(null);
+          });
+
+          section.hidden = false;
+          if (!("IntersectionObserver" in window)) return svg.classList.add("grown");
+          var seen = new IntersectionObserver(function (entries) {
+            if (!entries[0].isIntersecting) return;
+            seen.disconnect();
+            svg.classList.add("grown");
+          }, { threshold: 0.3 });
+          seen.observe(svg);
+        }
+
+        fetch("assets/profile/contributions.json")
+          .then(function (response) {
+            return response.ok ? response.json() : Promise.reject(response.status);
+          })
+          .then(draw)
+          .catch(function () {
+            section.hidden = true; // no data: the page simply goes on without the city
+          });
       })();
     </script>
   </body>
