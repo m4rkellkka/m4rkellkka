@@ -47,19 +47,3 @@ jobs:
           git commit -m "chore(profile): refresh live data"
           git push
 
-  snake:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: Platane/snk/svg-only@v3
-        with:
-          github_user_name: ${{ github.repository_owner }}
-          outputs: |
-            dist/snake.svg?palette=github-light&color_snake=#f0642f&color_dots=#ebedf0,#fbd3c2,#f7a17f,#f27a4c,#c94e22
-            dist/snake-dark.svg?palette=github-dark&color_snake=#f0642f&color_dots=#161b22,#4a2414,#8a3818,#c94e22,#f0642f
-      - uses: crazy-max/ghaction-github-pages@v5
-        with:
-          target_branch: output
-          build_dir: dist
-          jekyll: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

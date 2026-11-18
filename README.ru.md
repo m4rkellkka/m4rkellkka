@@ -1,27 +1,40 @@
 <div align="right"><sub><a href="README.md">EN</a> · <b>RU</b></sub></div>
 
-<img src="assets/profile/hero.ru.svg" width="100%" alt="Михаил Савушкин — full-stack разработчик, Next.js · React · AI. Пайплайн: чат → webhook → LLM → инсайт." />
-
-<img src="assets/profile/about.ru.svg" width="100%" alt="Обо мне: full-stack веб-продукты с AI. Путь: Yandex (Data Scientist, 2022) → Topkapı University (2023) → International Plus (2025) → Full-Stack Engineer, Web &amp; AI (2026, сейчас)." />
-
-<img src="assets/profile/stack.ru.svg" width="100%" alt="Стек. Frontend: TypeScript, React, Next.js, Tailwind, shadcn/ui. Backend: Node.js, PostgreSQL, Supabase, REST API, Webhooks. AI и данные: LLM API, AI-агенты, локальные LLM, Python, SQL." />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/profile/hero.ru.dark.svg" />
+  <img src="assets/profile/hero.ru.light.svg" width="100%" alt="Михаил Савушкин. Делаю приложения, которыми команды клиники пользуются вместо тредов в WhatsApp. Data Scientist в Яндексе в 2022–23, потом продажи в клинике, теперь её full-stack разработчик." />
+</picture>
 
 <p>
-  <a href="https://m4rkellkka.github.io/m4rkellkka/"><img src="assets/profile/card-tamam.ru.svg" width="49.5%" alt="Tamam — заявки и согласования для клиники, в пилоте" /></a>
-  <a href="https://m4rkellkka.github.io/m4rkellkka/"><img src="assets/profile/card-cv-screening.ru.svg" width="49.5%" alt="CV Screening — AI-ассистент для HR клиники, демо MVP" /></a>
-  <a href="https://m4rkellkka.github.io/m4rkellkka/"><img src="assets/profile/card-whatsapp-qa.ru.svg" width="49.5%" alt="WhatsApp QA Agent — LLM-ревьюер продажных чатов, в продакшене" /></a>
-  <a href="https://github.com/m4rkellkka/Lumis"><img src="assets/profile/card-lumis.ru.svg" width="49.5%" alt="Lumis — приложение для подготовки к экзаменам на локальных LLM" /></a>
+  <a href="https://m4rkellkka.github.io/m4rkellkka/">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="assets/profile/work-tamam.ru.dark.svg" />
+      <img src="assets/profile/work-tamam.ru.light.svg" width="100%" alt="Tamam — заявки и согласования вместо тредов в WhatsApp, в пилоте" />
+    </picture>
+  </a>
+  <a href="https://m4rkellkka.github.io/m4rkellkka/">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="assets/profile/work-cv-screening.ru.dark.svg" />
+      <img src="assets/profile/work-cv-screening.ru.light.svg" width="100%" alt="CV Screening — оценивает каждый критерий цитатой из резюме, решает HR; демо MVP" />
+    </picture>
+  </a>
+  <a href="https://m4rkellkka.github.io/m4rkellkka/">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="assets/profile/work-whatsapp-qa.ru.dark.svg" />
+      <img src="assets/profile/work-whatsapp-qa.ru.light.svg" width="100%" alt="WhatsApp QA — LLM читает продажные чаты и подсказывает, что исправить, в продакшене" />
+    </picture>
+  </a>
+  <a href="https://github.com/m4rkellkka/Lumis">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="assets/profile/work-lumis.ru.dark.svg" />
+      <img src="assets/profile/work-lumis.ru.light.svg" width="100%" alt="Lumis — подготовка к экзаменам на локальных LLM, пет-проект" />
+    </picture>
+  </a>
 </p>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/m4rkellkka/m4rkellkka/output/snake-dark.svg" />
-  <img src="https://raw.githubusercontent.com/m4rkellkka/m4rkellkka/output/snake.svg" width="100%" alt="Змейка ест мой граф контрибьюшенов" />
+  <source media="(prefers-color-scheme: dark)" srcset="assets/profile/footer.ru.dark.svg" />
+  <img src="assets/profile/footer.ru.light.svg" width="100%" alt="Есть процесс, который съедает время людей? Напишите мне. Next.js, React, TypeScript, Postgres / Supabase, Node.js, LLM APIs, Python." />
 </picture>
 
-<img src="assets/profile/contact.ru.svg" width="100%" alt="Давайте строить системы, которые убирают работу, а не добавляют её." />
-
-<p align="center">
-  <a href="https://m4rkellkka.github.io/m4rkellkka/"><img src="assets/profile/button-resume.ru.svg" height="46" alt="Резюме" /></a>
-  <a href="https://linkedin.com/in/mikhail-savushkin-993a33408"><img src="assets/profile/button-linkedin.ru.svg" height="46" alt="LinkedIn" /></a>
-  <a href="mailto:savushkinwork@gmail.com"><img src="assets/profile/button-email.ru.svg" height="46" alt="Email" /></a>
-</p>
+<p><a href="https://m4rkellkka.github.io/m4rkellkka/">Сайт</a> · <a href="https://m4rkellkka.github.io/m4rkellkka/assets/mikhail-savushkin-resume.pdf">Резюме (PDF)</a> · <a href="https://linkedin.com/in/mikhail-savushkin-993a33408">LinkedIn</a> · <a href="mailto:savushkinwork@gmail.com">savushkinwork@gmail.com</a></p>

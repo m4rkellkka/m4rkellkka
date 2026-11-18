@@ -1,3 +1,4 @@
+import math
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
@@ -316,64 +317,64 @@ def draw_wrapped(draw, xy, text, font, fill, width, line_gap=8):
 
 
 def build_social_preview():
+    """Link preview in the site's warm editorial style: paper, Literata headline, a tilted print of the photo."""
     width, height = 1200, 630
-    bg = Image.new("RGB", (width, height), "#0b0b0d")
+    paper, ink, muted, accent = "#f3eee6", "#211d18", "#6f685e", "#b8532d"
+    serif_dir = ROOT / "scripts" / "profile" / "fonts"
+    name_font = ImageFont.truetype(str(serif_dir / "Literata-Display.ttf"), 30)
+    head_font = ImageFont.truetype(str(serif_dir / "Literata-Display.ttf"), 60)
+    ital_font = ImageFont.truetype(str(serif_dir / "Literata-Display-Italic.ttf"), 60)
+    caption_font = ImageFont.truetype(str(serif_dir / "Literata-Display-Italic.ttf"), 24)
+    body_font = ImageFont.truetype(str(FONT_REGULAR), 24)
+
+    bg = Image.new("RGB", (width, height), paper)
     draw = ImageDraw.Draw(bg)
+    draw.text((72, 64), "Mikhail Savushkin", font=name_font, fill=ink)
 
-    # Clean dark design with orange accent
-    portrait = Image.open(PROFILE).convert("RGB")
-    portrait = portrait.resize((360, 480))
-    # Soften harsh contrasts instead of amplifying
-    portrait = ImageEnhance.Color(portrait).enhance(0.9)
-    portrait = ImageEnhance.Brightness(portrait).enhance(0.95)
-    
-    mask = Image.new("L", portrait.size, 0)
-    mask_draw = ImageDraw.Draw(mask)
-    mask_draw.rounded_rectangle((0, 0, portrait.width, portrait.height), radius=20, fill=255)
-    bg.paste(portrait, (760, 75), mask)
-    
-    # Subtle frame around portrait
-    draw.rounded_rectangle((760, 75, 1120, 555), radius=20, outline="#2a2a2d", width=2)
+    lines = [
+        [("I build the apps a", head_font, ink)],
+        [("clinic's teams use", head_font, ink)],
+        [("instead of", ital_font, accent), (" WhatsApp", head_font, ink)],
+        [("threads.", head_font, ink)],
+    ]
+    y = 140
+    for line in lines:
+        x = 72
+        for text, font, fill in line:
+            draw.text((x, y), text, font=font, fill=fill)
+            end = x + draw.textlength(text, font=font)
+            if fill == accent:
+                # Hand-drawn underline: a slow, uneven wave under the accent words.
+                base = y + font.getbbox(text)[3] + 10
+                points = [(px, base + 2.6 * math.sin((px - x) / 34.0) - 1.2 * math.sin((px - x) / 13.0)) for px in range(int(x) - 2, int(end) + 3, 3)]
+                draw.line(points, fill=accent, width=3, joint="curve")
+            x = end
+        y += 74
+    draw.text((72, y + 26), "Full-stack engineer in Istanbul · ex-Data Scientist at Yandex", font=body_font, fill=muted)
 
-    # Accent badge
-    draw.rectangle((760, 465, 1120, 555), fill="#121214")
-    draw.text((790, 498), "Location", font=ImageFont.truetype(str(FONT_MONO), 18), fill="#f0642f")
-    draw.text((890, 494), "Istanbul, Turkiye", font=ImageFont.truetype(str(FONT_BOLD), 22), fill="#e0e0e0")
+    # The photo as a print: white border, caption, slight tilt and a soft shadow.
+    photo = Image.open(PROFILE).convert("RGB")
+    ratio = 3 / 4
+    w, h = photo.size
+    if w / h > ratio:
+        crop_w = int(h * ratio)
+        photo = photo.crop(((w - crop_w) // 2, 0, (w + crop_w) // 2, h))
+    else:
+        crop_h = int(w / ratio)
+        photo = photo.crop((0, (h - crop_h) // 2, w, (h + crop_h) // 2))
+    photo = photo.resize((300, 400), Image.LANCZOS)
+    frame = Image.new("RGBA", (324, 470), "#fdfbf7")
+    frame.paste(photo, (12, 12))
+    frame_draw = ImageDraw.Draw(frame)
+    caption = "Istanbul, 2026"
+    frame_draw.text(((324 - frame_draw.textlength(caption, font=caption_font)) / 2, 424), caption, font=caption_font, fill="#5a534b")
 
-    title_font = ImageFont.truetype(str(FONT_DISPLAY), 72)
-    role_font = ImageFont.truetype(str(FONT_BOLD), 32)
-    body_font = ImageFont.truetype(str(FONT_REGULAR), 26)
-    chip_font = ImageFont.truetype(str(FONT_MONO), 18)
-
-    # Status chip, sized to its label
-    status = "Open to full-stack / AI roles"
-    chip_right = 125 + draw.textlength(status, font=chip_font) + 26
-    draw.rounded_rectangle((70, 98, chip_right, 146), radius=24, outline="#2a2a2d", fill="#161616")
-    draw.ellipse((94, 116, 106, 128), fill="#f0642f")
-    draw.text((125, 112), status, font=chip_font, fill="#a0a0a0")
-
-    # Typography
-    draw.text((70, 195), "Mikhail", font=title_font, fill="#e0e0e0")
-    draw.text((70, 275), "Savushkin", font=title_font, fill="#e0e0e0")
-    
-    role_bottom = draw_wrapped(
-        draw,
-        (72, 385),
-        "Full-Stack Engineer | Next.js, React & AI",
-        role_font,
-        "#f0642f",
-        640,
-        line_gap=10,
-    )
-    draw_wrapped(
-        draw,
-        (72, role_bottom + 25),
-        "Web products and AI integrations that remove manual work, grounded in a data science background at Yandex.",
-        body_font,
-        "#a0a0a0",
-        650,
-        line_gap=12,
-    )
+    shadow = Image.new("RGBA", (324 + 80, 470 + 80), (0, 0, 0, 0))
+    ImageDraw.Draw(shadow).rectangle((40, 52, 364, 522), fill=(60, 45, 30, 70))
+    shadow = shadow.filter(ImageFilter.GaussianBlur(18)).rotate(2.4, resample=Image.BICUBIC, expand=True)
+    tilted = frame.rotate(2.4, resample=Image.BICUBIC, expand=True)
+    bg.paste(shadow, (770, 50), shadow)
+    bg.paste(tilted, (800, 70), tilted)
 
     bg.save(SOCIAL_OUT, "PNG", optimize=True)
 

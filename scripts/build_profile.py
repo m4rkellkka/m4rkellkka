@@ -31,84 +31,31 @@ LANGS = ("en", "ru")
 
 CONTENT = {
     "en": {
-        "location": "ISTANBUL, TÜRKIYE",
         "name": "Mikhail Savushkin",
-        "role": "FULL-STACK ENGINEER",
-        "role_tail": " / NEXT.JS · REACT · AI",
-        "tagline": "I don't just write code — I ship web apps and AI systems that kill real bottlenecks.",
-        "status": "latest push",
-        "private_repo": "private project",
-        "pipeline_label": "// WHAT I BUILD",
-        "pipeline": [
-            ("chat", "WhatsApp · CRM"),
-            ("webhook", "Node.js · AWS"),
-            ("LLM", "LLM APIs · agents"),
-            ("insight", "QA report · signals"),
-        ],
-        "stack_label": "// STACK",
-        "stack": [
-            ("FRONTEND", ["TypeScript", "React", "Next.js", "Tailwind", "shadcn/ui"]),
-            ("BACKEND", ["Node.js", "PostgreSQL", "Supabase", "REST APIs", "Webhooks"]),
-            ("AI & DATA", ["LLM APIs", "AI agents", "Local LLMs", "Python", "SQL"]),
-        ],
-        "also": "also: Pandas · AWS · Tauri · Java · C++ · Verilog",
-        "pushed": "pushed",
-        "private": "private",
-        "about_label": "// ABOUT",
-        "about": "I build full-stack web products and connect them to AI: Next.js interfaces that work on a phone, Postgres with real access control, and LLM pipelines that take manual work off people. The data-first habit comes from a year as a Data Scientist at Yandex.",
-        "timeline": [
-            ("SEP 2022", "Yandex", "Data Scientist · Moscow"),
-            ("OCT 2023", "Topkapı University", "B.Eng. Computer Engineering"),
-            ("DEC 2025", "International Plus", "Medical Advisor · CRM"),
-            ("MAY 2026", "International Plus", "Full-Stack Engineer · Web & AI"),
-        ],
-        "now": "NOW",
-        "contact_label": "// CONTACT",
-        "contact_title": "Let's build something that removes work, not adds it.",
-        "contact_note": "this profile rebuilds itself every morning · profile.yml → build_profile.py",
-        "buttons": {"resume": "Resume", "linkedin": "LinkedIn", "email": "Email"},
+        "place": "Istanbul",
+        # (text, is_accent): the accent run stays on one line, set in italic with a hand-drawn underline.
+        "headline": [("I build the apps a clinic's teams use", False), ("instead of", True), ("WhatsApp threads.", False)],
+        "path": "Data Scientist at Yandex in 2022–23, then a clinic's sales team, now its full-stack engineer.",
+        "open": "Open to full-stack and AI roles",
+        "last_push": "last push",
+        "private_repo": "a private project",
+        "invite": [("Have a process that eats people's time?", False), ("Write to me.", True)],
+        "stack": "Next.js · React · TypeScript · Postgres / Supabase · Node.js · LLM APIs · Python",
     },
     "ru": {
-        "location": "СТАМБУЛ, ТУРЦИЯ",
         "name": "Михаил Савушкин",
-        "role": "FULL-STACK РАЗРАБОТЧИК",
-        "role_tail": " / NEXT.JS · REACT · AI",
-        "tagline": "Я не просто пишу код — я делаю веб-приложения и AI-системы, которые убирают реальные узкие места.",
-        "status": "последний пуш",
+        "place": "Стамбул",
+        "headline": [("Делаю приложения, которыми команды клиники пользуются", False), ("вместо", True), ("тредов в WhatsApp.", False)],
+        "path": "Data Scientist в Яндексе в 2022–23, потом продажи в клинике, теперь её full-stack разработчик.",
+        "open": "Открыт к full-stack и AI-ролям",
+        "last_push": "последний пуш",
         "private_repo": "приватный проект",
-        "pipeline_label": "// ЧТО Я СТРОЮ",
-        "pipeline": [
-            ("чат", "WhatsApp · CRM"),
-            ("webhook", "Node.js · AWS"),
-            ("LLM", "LLM API · агенты"),
-            ("инсайт", "QA-отчёт · сигналы"),
-        ],
-        "stack_label": "// СТЕК",
-        "stack": [
-            ("FRONTEND", ["TypeScript", "React", "Next.js", "Tailwind", "shadcn/ui"]),
-            ("BACKEND", ["Node.js", "PostgreSQL", "Supabase", "REST API", "Webhooks"]),
-            ("AI И ДАННЫЕ", ["LLM API", "AI-агенты", "Локальные LLM", "Python", "SQL"]),
-        ],
-        "also": "ещё: Pandas · AWS · Tauri · Java · C++ · Verilog",
-        "pushed": "пуш",
-        "private": "private",
-        "about_label": "// ОБО МНЕ",
-        "about": "Делаю full-stack веб-продукты и подключаю к ним AI: интерфейсы на Next.js, которые удобны с телефона, Postgres с настоящим контролем доступа и LLM-пайплайны, которые снимают с людей ручную работу. Data-first подход — из года работы Data Scientist в Yandex.",
-        "timeline": [
-            ("СЕН 2022", "Yandex", "Data Scientist · Москва"),
-            ("ОКТ 2023", "Topkapı University", "Компьютерная инженерия"),
-            ("ДЕК 2025", "International Plus", "Medical Advisor · CRM"),
-            ("МАЙ 2026", "International Plus", "Full-Stack Engineer · Web & AI"),
-        ],
-        "now": "СЕЙЧАС",
-        "contact_label": "// КОНТАКТЫ",
-        "contact_title": "Давайте строить системы, которые убирают работу, а не добавляют её.",
-        "contact_note": "профиль пересобирается сам каждое утро · profile.yml → build_profile.py",
-        "buttons": {"resume": "Резюме", "linkedin": "LinkedIn", "email": "Email"},
+        "invite": [("Есть процесс, который съедает время людей?", False), ("Напишите мне.", True)],
+        "stack": "Next.js · React · TypeScript · Postgres / Supabase · Node.js · LLM APIs · Python",
     },
 }
 
-# Card order is the README order: two per row.
+# README order. "live" marks a status that is real usage (accent dot) rather than a demo or side project.
 PROJECTS = [
     {
         "slug": "tamam",
@@ -116,59 +63,48 @@ PROJECTS = [
         # Private repos are matched by id, so their names never appear in this public repo.
         "repo_id": 1387651029,
         "title": "Tamam",
-        "label": {"en": "IN PILOT", "ru": "В ПИЛОТЕ"},
+        "status": {"en": "in pilot", "ru": "в пилоте"},
+        "live": True,
         "desc": {
-            "en": "Request and approval app for a clinic's sales teams: 5 roles, live queues, 4 languages with RTL and on-device translation.",
-            "ru": "Заявки и согласования для отделов продаж клиники: 5 ролей, живые очереди, 4 языка с RTL и переводом прямо в браузере.",
+            "en": "Requests and approvals instead of WhatsApp threads",
+            "ru": "Заявки и согласования вместо тредов в WhatsApp",
         },
-        "tags": ["Next.js", "React", "Supabase", "RLS"],
-        "org": "International Plus",
     },
     {
         "slug": "cv-screening",
         "repo": None,
         "repo_id": 1385646223,
         "title": "CV Screening",
-        "label": {"en": "MVP DEMO", "ru": "ДЕМО MVP"},
+        "status": {"en": "MVP demo", "ru": "демо MVP"},
+        "live": False,
         "desc": {
-            "en": "AI assistant for a clinic's HR: rates every hiring criterion with a quote from the CV, strips personal data before the LLM, HR decides.",
-            "ru": "AI-ассистент для HR клиники: оценивает каждый критерий цитатой из резюме, убирает персональные данные до LLM, решение за HR.",
+            "en": "Rates each criterion with a quote from the CV; HR decides",
+            "ru": "Оценивает каждый критерий цитатой из резюме, решает HR",
         },
-        "tags": ["Next.js", "Claude API", "Ollama", "OCR"],
-        "org": "International Plus",
     },
     {
         "slug": "whatsapp-qa",
         "repo": None,
-        "title": "WhatsApp QA Agent",
-        "label": {"en": "IN PRODUCTION", "ru": "В ПРОДАКШЕНЕ"},
+        "title": "WhatsApp QA",
+        "status": {"en": "in production", "ru": "в продакшене"},
+        "live": True,
         "desc": {
-            "en": "LLM reviewer for sales chats: webhooks pull conversations, the model extracts sales signals and returns audit-ready feedback.",
-            "ru": "LLM-ревьюер продажных чатов: webhooks забирают переписки, модель находит сигналы продаж и готовит фидбек для аудита.",
+            "en": "An LLM reads sales chats and points out what to fix",
+            "ru": "LLM читает продажные чаты и подсказывает, что исправить",
         },
-        "tags": ["LLM APIs", "Webhooks", "Node.js", "QA logic"],
-        "org": "International Plus",
     },
     {
         "slug": "lumis",
         "repo": "Lumis",
         "title": "Lumis",
-        "label": {"en": "LOCAL-FIRST AI", "ru": "LOCAL-FIRST AI"},
+        "status": {"en": "side project", "ru": "пет-проект"},
+        "live": False,
         "desc": {
-            "en": "Exam prep app: topic analysis, AI-generated flashcards and quizzes, spaced repetition and mock exams — all on local LLMs.",
-            "ru": "Подготовка к экзаменам: анализ тем, AI-карточки и квизы, интервальные повторения и пробные экзамены — на локальных LLM.",
+            "en": "Exam prep on local LLMs; nothing leaves the laptop",
+            "ru": "Подготовка к экзаменам на локальных LLM, всё остаётся на ноутбуке",
         },
-        "tags": ["Tauri", "Next.js", "TypeScript", "Local LLMs"],
     },
 ]
-
-LANGUAGE_COLORS = {
-    "TypeScript": "#3178c6",
-    "Python": "#3572a5",
-    "Jupyter Notebook": "#da5b0b",
-    "Java": "#b07219",
-    "Verilog": "#b2b7f8",
-}
 
 
 def oklch(l, c, h):
@@ -191,22 +127,26 @@ def oklch(l, c, h):
     return "#" + "".join(f"{encode(x):02x}" for x in rgb)
 
 
-# Same tokens as the :root block in index.html, so the profile and the resume site share one palette.
-C = {
-    "bg": oklch(0.085, 0, 0),
-    "raised": oklch(0.115, 0.003, 70),
-    "surface": oklch(0.155, 0.006, 70),
-    "surface_strong": oklch(0.205, 0.008, 70),
-    "ink": oklch(0.925, 0.014, 78),
-    "ink_strong": oklch(0.985, 0.005, 78),
-    "muted": oklch(0.705, 0.018, 72),
-    "muted_soft": oklch(0.575, 0.014, 72),
-    "primary": oklch(0.645, 0.185, 39),
-    "amber": oklch(0.755, 0.145, 72),
-    "teal": oklch(0.76, 0.105, 190),
+# Same tokens as the :root blocks in index.html, so the profile and the resume site share one palette.
+THEMES = {
+    "light": {
+        "paper": oklch(0.955, 0.012, 80),
+        "ink": oklch(0.23, 0.012, 60),
+        "soft": oklch(0.38, 0.012, 60),
+        "muted": oklch(0.5, 0.016, 65),
+        "accent": oklch(0.56, 0.155, 38),
+        "line": "rgba(43,36,29,0.16)",
+    },
+    # GitHub dark is #0d1117: the hero card is warm graphite, the transparent rows use light ink.
+    "dark": {
+        "paper": oklch(0.21, 0.008, 60),
+        "ink": oklch(0.93, 0.012, 80),
+        "soft": oklch(0.83, 0.012, 80),
+        "muted": oklch(0.76, 0.014, 72),
+        "accent": oklch(0.72, 0.135, 42),
+        "line": "rgba(240,233,222,0.16)",
+    },
 }
-LINE = "rgba(255,255,255,0.08)"
-LINE_STRONG = "rgba(255,255,255,0.16)"
 
 
 class Face:
@@ -245,13 +185,12 @@ class Face:
 FACES = {
     face.family: face
     for face in (
-        Face("pf-display", "Unbounded-Bold.ttf"),
+        Face("pf-serif", "Literata-Display.ttf"),
+        Face("pf-serif-it", "Literata-Display-Italic.ttf"),
         Face("pf-body", "Manrope-Regular.ttf"),
-        Face("pf-mono", "JetBrainsMono-Regular.ttf"),
-        Face("pf-mono-md", "JetBrainsMono-Medium.ttf"),
     )
 }
-DISPLAY, BODY, MONO, MONO_MD = (FACES[k] for k in ("pf-display", "pf-body", "pf-mono", "pf-mono-md"))
+SERIF, SERIF_IT, BODY = (FACES[k] for k in ("pf-serif", "pf-serif-it", "pf-body"))
 
 
 def num(value):
@@ -286,12 +225,15 @@ class Svg:
         self.body.extend(parts)
 
     def text(self, x, y, content, face, size, fill=None, **values):
-        """content is a string or a list of (text, fill) spans."""
+        """content is a string or a list of (text, fill) or (text, fill, face) spans."""
         spans = [(content, None)] if isinstance(content, str) else content
         inner = ""
-        for part, span_fill in spans:
-            self.chars.setdefault(face.family, set()).update(part)
-            inner += el("tspan", escape(part), fill=span_fill) if span_fill else escape(part)
+        for span in spans:
+            part, span_fill = span[0], span[1]
+            span_face = span[2] if len(span) > 2 else face
+            self.chars.setdefault(span_face.family, set()).update(part)
+            own_class = span_face.family if span_face is not face else None
+            inner += el("tspan", escape(part), fill=span_fill, class_=own_class) if span_fill or own_class else escape(part)
         self.add(el("text", inner, x=x, y=y, class_=face.family, font_size=size, fill=fill, **values))
 
     def render(self):
@@ -307,54 +249,10 @@ class Svg:
         )
 
 
-def backdrop(svg, radius, glow=None, noise=True):
-    """Resume-site background: dark gradient, fading 48px grid, grain, optional orange glow."""
-    w, h = svg.width, svg.height
-    svg.defs += [
-        el(
-            "linearGradient",
-            el("stop", offset=0, stop_color=C["raised"]) + el("stop", offset=1, stop_color=C["bg"]),
-            id="bg", x1=0, y1=0, x2=0, y2=1,
-        ),
-        el(
-            "pattern",
-            el("path", d="M48 0H0V48", fill="none", stroke="#fff", stroke_opacity=0.045),
-            id="grid", width=48, height=48, patternUnits="userSpaceOnUse",
-        ),
-        el(
-            "linearGradient",
-            el("stop", offset=0, stop_color="#fff") + el("stop", offset=0.85, stop_color="#fff", stop_opacity=0),
-            id="fade", x1=0, y1=0, x2=0, y2=1,
-        ),
-        el("mask", el("rect", width=w, height=h, fill="url(#fade)"), id="grid-mask"),
-        el("clipPath", el("rect", width=w, height=h, rx=radius), id="frame"),
-    ]
-    layers = [el("rect", width=w, height=h, fill="url(#bg)")]
-    if glow:
-        cx, cy, r = glow
-        svg.defs.append(
-            el(
-                "radialGradient",
-                el("stop", offset=0, stop_color=C["primary"], stop_opacity=0.2)
-                + el("stop", offset=1, stop_color=C["primary"], stop_opacity=0),
-                id="glow", cx=cx, cy=cy, r=r,
-            )
-        )
-        layers.append(el("rect", width=w, height=h, fill="url(#glow)"))
-    layers.append(el("rect", width=w, height=h, fill="url(#grid)", mask="url(#grid-mask)"))
-    if noise:
-        # Only on static images: an animated SVG would recompute the turbulence every frame.
-        svg.defs.append(
-            el(
-                "filter",
-                el("feTurbulence", type="fractalNoise", baseFrequency=0.9, numOctaves=3, stitchTiles="stitch")
-                + el("feColorMatrix", type="saturate", values=0),
-                id="grain",
-            )
-        )
-        layers.append(el("rect", width=w, height=h, filter="url(#grain)", opacity=0.07))
-    svg.add(el("g", "".join(layers), clip_path="url(#frame)"))
-    svg.add(el("rect", x=0.5, y=0.5, width=w - 1, height=h - 1, rx=radius - 0.5, fill="none", stroke=LINE_STRONG))
+def paper(svg, theme, radius=20):
+    """A flat sheet of warm paper with a hairline edge: no grid, grain or glow."""
+    c = THEMES[theme]
+    svg.add(el("rect", x=0.5, y=0.5, width=svg.width - 1, height=svg.height - 1, rx=radius, fill=c["paper"], stroke=c["line"]))
 
 
 def day_first(iso_date):
@@ -397,232 +295,133 @@ def wrap(face, text, size, max_width, max_lines):
     return lines
 
 
-def section_label(svg, x, y, label, right):
-    svg.text(x, y, label, MONO, 14, C["muted_soft"], letter_spacing=2)
-    start = x + MONO.width(label, 14, 2) + 14
-    svg.add(el("path", d=f"M{num(start)} {y - 5}H{right}", stroke=LINE_STRONG))
+def rich_lines(runs, size, max_width):
+    """runs: [(text, is_accent)] -> lines of [(word, is_accent)]. An accent run is never split."""
+    words = []
+    for text, accent in runs:
+        words += [(text, True)] if accent else [(w, False) for w in text.split()]
+    lines, line, width = [], [], 0.0
+    for word, accent in words:
+        face = SERIF_IT if accent else SERIF
+        add = face.width(word, size) + (SERIF.width(" ", size) if line else 0)
+        if line and width + add > max_width:
+            lines.append(line)
+            line, width, add = [], 0.0, face.width(word, size)
+        line.append((word, accent))
+        width += add
+    if line:
+        lines.append(line)
+    return lines
 
 
-def chip(svg, x, y, label, size, height):
-    width = MONO.width(label, size) + 24
-    svg.add(el("rect", x=num(x), y=y, width=num(width), height=height, rx=8, fill=C["surface"], stroke=LINE))
-    svg.text(num(x + 12), num(y + height / 2 + size * 0.36), label, MONO, size, C["ink"])
-    return width
+def balanced_lines(runs, size, max_width):
+    """Like CSS text-wrap: balance: the narrowest measure that keeps the same number of lines."""
+    lines = rich_lines(runs, size, max_width)
+    width = max_width
+    while width > max_width * 0.55:
+        narrower = rich_lines(runs, size, width - 8)
+        if len(narrower) > len(lines):
+            break
+        lines, width = narrower, width - 8
+    return lines
 
 
-def star(cx, cy, r):
-    points = []
-    for i in range(10):
-        radius = r if i % 2 == 0 else r * 0.45
-        angle = math.radians(-90 + i * 36)
-        points.append(f"{num(cx + radius * math.cos(angle))},{num(cy + radius * math.sin(angle))}")
-    return " ".join(points)
+def rich_text(svg, x, y, line, size, c):
+    """Draw one line of (word, is_accent); return (start, end) x of the accent run, if any."""
+    spans, cursor, accent_span = [], x, None
+    for i, (word, accent) in enumerate(line):
+        text = (" " if i else "") + word
+        face = SERIF_IT if accent else SERIF
+        if accent:
+            start = cursor + (SERIF_IT.width(" ", size) if i else 0)
+            accent_span = (start, cursor + face.width(text, size))
+        spans.append((text, c["accent"] if accent else c["ink"], face))
+        cursor += face.width(text, size)
+    svg.text(x, y, spans, SERIF, size)
+    return accent_span
 
 
-def hero(lang, live):
-    t = CONTENT[lang]
-    svg = Svg(1200, 460, f"{t['name']} — {t['role']}")
-    pad, right = 64, 1136
-    backdrop(svg, 18, glow=(0.88, 0.02, 0.62), noise=False)
-    svg.styles.append(
-        "@keyframes ping{0%{transform:scale(1);opacity:.7}80%,100%{transform:scale(2.6);opacity:0}}"
-        ".ping{transform-box:fill-box;transform-origin:center;animation:ping 2.2s cubic-bezier(0,0,.2,1) infinite}"
-        "@media (prefers-reduced-motion:reduce){.ping{animation:none;opacity:0}.packet{display:none}}"
+def scribble(svg, start, end, y, c):
+    """Hand-drawn underline that draws itself once when the image loads."""
+    w = end - start
+    d = (
+        f"M{num(start)} {num(y)}C{num(start + w * 0.18)} {num(y - 3)} {num(start + w * 0.34)} {num(y + 2.6)} "
+        f"{num(start + w * 0.52)} {num(y - 0.4)}S{num(start + w * 0.84)} {num(y - 2.6)} {num(end)} {num(y + 0.2)}"
     )
+    svg.styles.append(
+        # Visible by default: a renderer that skips CSS animation still shows the line.
+        "@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}"
+        ".scribble{stroke-dasharray:1;stroke-dashoffset:0;animation:draw .9s cubic-bezier(.65,0,.35,1) .5s both}"
+        "@media (prefers-reduced-motion:reduce){.scribble{animation:none}}"
+    )
+    svg.add(el("path", d=d, pathLength=1, fill="none", stroke=c["accent"], stroke_width=2.6, stroke_linecap="round", class_="scribble"))
 
-    # Top row: location on the left, live status pill on the right.
-    svg.text(pad, 76, t["location"], MONO, 15, C["muted_soft"], letter_spacing=2.5)
+
+def hero(lang, theme, live):
+    t, c = CONTENT[lang], THEMES[theme]
+    pad, right, size, leading = 64, 1136, 50, 60
+    lines = balanced_lines(t["headline"], size, right - pad)
+    first = 168
+    last = first + (len(lines) - 1) * leading
+    path_y = last + 62
+    rule_y = path_y + 40
+    foot_y = rule_y + 42
+    headline = " ".join(text for text, _ in t["headline"])
+    svg = Svg(1200, foot_y + 38, f"{t['name']}. {headline}")
+    paper(svg, theme)
+
+    svg.text(pad, 78, t["name"], SERIF, 24, c["ink"])
+    svg.text(right, 78, t["place"], BODY, 16, c["muted"], text_anchor="end")
+    for i, line in enumerate(lines):
+        y = first + i * leading
+        accent = rich_text(svg, pad, y, line, size, c)
+        if accent:
+            scribble(svg, accent[0] - 2, accent[1] + 2, y + 13, c)
+    for i, line in enumerate(wrap(BODY, t["path"], 19, right - pad, 2)):
+        svg.text(pad, path_y + i * 28, line, BODY, 19, c["soft"])
+
+    svg.add(el("path", d=f"M{pad} {rule_y}H{right}", stroke=c["line"]))
+    svg.text(pad, foot_y, t["open"], BODY, 15, c["muted"])
     latest = live["latest"]
     title = latest["title"] or t["private_repo"]
-    status =[(f"{t['status']} → ", C["muted"]), (title, C["ink_strong"]), (f" · {day_first(latest['pushed'])}", C["muted"])]
-    status_width = sum(MONO.width(part, 15) for part, _ in status)
-    pill_x = right - status_width - 52
-    svg.add(
-        el("rect", x=num(pill_x), y=50, width=num(status_width + 52), height=38, rx=19, fill=C["surface"], stroke=LINE_STRONG),
-        el("circle", cx=num(pill_x + 22), cy=69, r=5, fill=C["teal"], class_="ping"),
-        el("circle", cx=num(pill_x + 22), cy=69, r=5, fill=C["teal"]),
-    )
-    svg.text(num(pill_x + 36), 74, status, MONO, 15)
-
-    # Name, role, tagline.
-    svg.text(pad, 160, t["name"], DISPLAY, num(fit(DISPLAY, t["name"], 62, right - pad)), C["ink_strong"])
-    svg.text(pad, 206, [(t["role"], C["primary"]), (t["role_tail"], C["muted_soft"])], MONO_MD, 19, letter_spacing=1.5)
-    for i, line in enumerate(wrap(BODY, t["tagline"], 23, right - pad, 2)):
-        svg.text(pad, 252 + i * 32, line, BODY, 23, C["ink"])
-
-    # Pipeline: packets run left to right behind the nodes and turn teal once they leave the LLM.
-    section_label(svg, pad, 318, t["pipeline_label"], right)
-    node_w, node_h, node_y = 196, 52, 344
-    gap = (right - pad - 4 * node_w) / 3
-    xs = [pad + i * (node_w + gap) for i in range(4)]
-    mid = node_y + node_h / 2
-    start, end = xs[0] + node_w / 2, xs[3] + node_w / 2
-    for a, b in zip(xs, xs[1:]):
-        x1, x2 = a + node_w + 10, b - 12
-        svg.add(
-            el("path", d=f"M{num(x1)} {num(mid)}H{num(x2)}", stroke=C["muted_soft"], stroke_opacity=0.55, stroke_dasharray="3 6"),
-            el("path", d=f"M{num(x2 - 7)} {num(mid - 6)}L{num(x2)} {num(mid)}L{num(x2 - 7)} {num(mid + 6)}", fill="none", stroke=C["muted_soft"], stroke_width=1.5),
-        )
-    switch = (xs[2] + node_w / 2 - start) / (end - start)
-    # 4 packets over 3 gaps: their spacing never lines up with the nodes, so some are always visible.
-    duration, packets = 6.0, 4
-    for i in range(packets):
-        timing = {"dur": f"{num(duration)}s", "begin": f"-{num(i * duration / packets)}s", "repeatCount": "indefinite"}
-        paint = el("animate", attributeName="fill", values=f"{C['primary']};{C['teal']}", keyTimes=f"0;{num(switch)}", calcMode="discrete", **timing)
-        motion = el("animateMotion", path=f"M{num(start)} {num(mid)}H{num(end)}", **timing)
-        svg.add(el("circle", paint + motion, r=5.5, fill=C["primary"], class_="packet"))
-    for i, (x, (label, caption)) in enumerate(zip(xs, t["pipeline"])):
-        accent = {2: C["primary"], 3: C["teal"]}.get(i)
-        svg.add(el("rect", x=num(x), y=node_y, width=node_w, height=node_h, rx=12, fill=C["surface"], stroke=accent or LINE_STRONG, stroke_opacity=0.7 if accent else None))
-        if i == 2:
-            svg.add(el("rect", x=num(x), y=node_y, width=node_w, height=node_h, rx=12, fill=C["primary"], opacity=0.1))
-        svg.text(num(x + node_w / 2), num(mid + 6.5), label, MONO_MD, 18, C["ink_strong"], text_anchor="middle")
-        svg.text(num(x + node_w / 2), 424, caption, MONO, 13.5, C["muted_soft"], text_anchor="middle")
+    status = [(f"{t['last_push']} → ", c["muted"]), (title, c["ink"]), (f" · {day_first(latest['pushed'])}", c["muted"])]
+    width = sum(BODY.width(part, 15) for part, _ in status)
+    svg.add(el("circle", cx=num(right - width - 12), cy=foot_y - 5, r=3.5, fill=c["accent"]))
+    svg.text(right, foot_y, status, BODY, 15, text_anchor="end")
     return svg
 
 
-def stack(lang):
-    t = CONTENT[lang]
-    pad, right, gap = 64, 1136, 44
-    col_w = (right - pad - 2 * gap) / 3
-    layout, rows_bottom = [], 0
-    for col, (name, chips) in enumerate(t["stack"]):
-        x0 = pad + col * (col_w + gap)
-        x, y, placed = x0, 150, []
-        for label in chips:
-            width = MONO.width(label, 15) + 24
-            if x + width > x0 + col_w and x > x0:
-                x, y = x0, y + 44
-            placed.append((x, y, label))
-            x += width + 8
-        layout.append((x0, name, placed))
-        rows_bottom = max(rows_bottom, y + 34)
-
-    svg = Svg(1200, rows_bottom + 78, f"Stack — {t['also']}")
-    backdrop(svg, 18)
-    section_label(svg, pad, 56, t["stack_label"], right)
-    for col, (x0, name, placed) in enumerate(layout):
-        line_end = x0 + col_w
-        svg.text(num(x0), 106, f"0{col + 1}", MONO_MD, 15, C["primary"])
-        svg.text(num(x0 + 34), 107, name, DISPLAY, 21, C["ink_strong"])
-        svg.add(el("path", d=f"M{num(x0)} 126H{num(line_end)}", stroke=LINE_STRONG))
-        if col < 2:
-            tip = line_end + gap / 2 + 6
-            svg.add(el("path", d=f"M{num(tip - 12)} 120L{num(tip - 6)} 126L{num(tip - 12)} 132", fill="none", stroke=C["primary"], stroke_width=1.5))
-        for x, y, label in placed:
-            chip(svg, x, y, label, 15, 34)
-    svg.text(pad, rows_bottom + 44, t["also"], MONO, 14, C["muted_soft"])
+def work_row(project, index, lang, theme):
+    """One line of the work list. Transparent, so consecutive rows read as one table of contents."""
+    c = THEMES[theme]
+    pad, right, h = 64, 1136, 116
+    svg = Svg(1200, h, f"{project['title']} — {project['desc'][lang]} ({project['status'][lang]})")
+    svg.text(pad, 66, f"0{index}", SERIF_IT, 30, c["accent"])
+    svg.text(pad + 62, 60, project["title"], SERIF, 32, c["ink"])
+    status = project["status"][lang]
+    status_x = right - 26
+    svg.text(num(status_x), 60, status, BODY, 15, c["muted"], text_anchor="end")
+    dot_x = status_x - BODY.width(status, 15) - 12
+    svg.add(el("circle", cx=num(dot_x), cy=55, r=3.5, fill=c["accent"] if project["live"] else c["line"]))
+    ax, ay = right - 12, 48
+    svg.add(el("path", d=f"M{ax} {ay + 12}L{ax + 12} {ay}M{ax + 3} {ay}H{ax + 12}V{ay + 9}", fill="none", stroke=c["muted"], stroke_width=1.6, stroke_linecap="round", stroke_linejoin="round"))
+    desc = project["desc"][lang]
+    svg.text(pad + 62, 92, desc, BODY, num(fit(BODY, desc, 18, right - pad - 62)), c["soft"])
+    svg.add(el("path", d=f"M{pad} {h - 0.5}H{right}", stroke=c["line"]))
     return svg
 
 
-def card(project, index, lang, live):
-    t = CONTENT[lang]
-    w, h, pad = 600, 320, 36
-    svg = Svg(w, h, f"{project['title']} — {project['desc'][lang]}")
-    backdrop(svg, 16, glow=(1.0, 0.0, 0.7))
-
-    svg.text(pad, 54, [(f"0{index}", C["primary"]), (f"  /  {project['label'][lang]}", C["muted_soft"])], MONO_MD, 14, letter_spacing=1.5)
-    ax, ay = w - pad - 14, 40
-    svg.add(el("path", d=f"M{ax} {ay + 14}L{ax + 14} {ay}M{ax + 4} {ay}H{ax + 14}V{ay + 10}", fill="none", stroke=C["muted"], stroke_width=2, stroke_linecap="round", stroke_linejoin="round"))
-
-    svg.text(pad, 104, project["title"], DISPLAY, num(fit(DISPLAY, project["title"], 30, w - 2 * pad)), C["ink_strong"])
-    for i, line in enumerate(wrap(BODY, project["desc"][lang], 19, w - 2 * pad, 3)):
-        svg.text(pad, 144 + i * 28, line, BODY, 19, C["muted"])
-
-    x = pad
-    for tag in project["tags"]:
-        if x + MONO.width(tag, 13.5) + 24 > w - pad:
-            break
-        x += chip(svg, x, 222, tag, 13.5, 30) + 8
-
-    svg.add(el("path", d=f"M{pad} 270H{w - pad}", stroke=LINE))
-    base = 300
-    if project["repo"]:
-        repo = live["repos"][project["repo"]]
-        language = repo["language"] or "—"
-        svg.add(el("circle", cx=pad + 6, cy=base - 5, r=6, fill=LANGUAGE_COLORS.get(language, C["muted"])))
-        svg.text(pad + 20, base, language, MONO, 14, C["muted"])
-        if repo["stars"]:
-            sx = pad + 20 + MONO.width(language, 14) + 24
-            svg.add(el("polygon", points=star(sx + 7, base - 5, 8), fill=C["amber"]))
-            svg.text(num(sx + 20), base, str(repo["stars"]), MONO, 14, C["muted"])
-        svg.text(w - pad, base, f"{t['pushed']} {day_first(repo['pushed'])}", MONO, 14, C["muted_soft"], text_anchor="end")
-    else:
-        svg.add(el("circle", cx=pad + 6, cy=base - 5, r=6, fill=C["teal"]))
-        svg.text(pad + 20, base, t["private"], MONO, 14, C["muted"])
-        svg.text(w - pad, base, project["org"], MONO, 14, C["muted_soft"], text_anchor="end")
-    return svg
-
-
-def about(lang):
-    t = CONTENT[lang]
-    pad, right = 64, 1136
-    lines = wrap(BODY, t["about"], 22, right - pad, 3)
-    line_y = 104 + (len(lines) - 1) * 32 + 80
-    svg = Svg(1200, line_y + 104, t["about"])
-    backdrop(svg, 18)
-    section_label(svg, pad, 56, t["about_label"], right)
+def footer(lang, theme):
+    t, c = CONTENT[lang], THEMES[theme]
+    pad, right, size, leading = 64, 1136, 34, 44
+    lines = balanced_lines(t["invite"], size, right - pad)
+    first = 70
+    stack_y = first + (len(lines) - 1) * leading + 46
+    invite = " ".join(text for text, _ in t["invite"])
+    svg = Svg(1200, stack_y + 30, f"{invite} {t['stack']}")
     for i, line in enumerate(lines):
-        svg.text(pad, 104 + i * 32, line, BODY, 22, C["ink"])
-
-    # Career drawn like the hero pipeline: orange behind, teal for where I am now.
-    stops = t["timeline"]
-    col_w = (right - pad) / len(stops)
-    xs = [pad + 6 + i * col_w for i in range(len(stops))]
-    svg.defs.append(
-        el(
-            "linearGradient",
-            el("stop", offset=0, stop_color=C["primary"]) + el("stop", offset=1, stop_color=C["teal"]),
-            id="path", gradientUnits="userSpaceOnUse", x1=num(xs[0]), y1=0, x2=num(xs[-1]), y2=0,
-        )
-    )
-    svg.add(
-        el("path", d=f"M{num(xs[0])} {line_y}H{num(xs[-1])}", stroke="url(#path)", stroke_width=2),
-        el("path", d=f"M{num(xs[-1])} {line_y}H{right}", stroke=C["teal"], stroke_opacity=0.5, stroke_dasharray="3 6"),
-    )
-    for i, (x, (date, org, role)) in enumerate(zip(xs, stops)):
-        current = i == len(stops) - 1
-        color = C["teal"] if current else C["primary"]
-        svg.text(num(x - 6), line_y - 22, date, MONO_MD, 14, color, letter_spacing=1.5)
-        if current:
-            pill_x = x - 6 + MONO_MD.width(date, 14, 1.5) + 10
-            pill_w = MONO_MD.width(t["now"], 11.5, 1.5) + 18
-            svg.add(
-                el("rect", x=num(pill_x), y=line_y - 40, width=num(pill_w), height=24, rx=12, fill=C["teal"], fill_opacity=0.14, stroke=C["teal"], stroke_opacity=0.5),
-                el("circle", cx=num(x), cy=line_y, r=13, fill=C["teal"], opacity=0.16),
-            )
-            svg.text(num(pill_x + 9), line_y - 24, t["now"], MONO_MD, 11.5, C["teal"], letter_spacing=1.5)
-        svg.add(el("circle", cx=num(x), cy=line_y, r=6, fill=C["teal"] if current else C["bg"], stroke=color, stroke_width=2))
-        svg.text(num(x - 6), line_y + 40, org, DISPLAY, num(fit(DISPLAY, org, 17, col_w - 28)), C["ink_strong"])
-        svg.text(num(x - 6), line_y + 66, role, MONO, 13.5, C["muted_soft"])
-    return svg
-
-
-def contact(lang):
-    t = CONTENT[lang]
-    pad, right = 64, 1136
-    lines = wrap(DISPLAY, t["contact_title"], 28, right - pad, 2)
-    note_y = 110 + (len(lines) - 1) * 42 + 50
-    svg = Svg(1200, note_y + 44, t["contact_title"])
-    backdrop(svg, 18, glow=(0.1, 1.0, 0.75))
-    section_label(svg, pad, 56, t["contact_label"], right)
-    for i, line in enumerate(lines):
-        svg.text(pad, 110 + i * 42, line, DISPLAY, 28, C["ink_strong"])
-    svg.text(pad, note_y, t["contact_note"], MONO, 14, C["muted_soft"])
-    return svg
-
-
-def button(label, primary):
-    """One linkable pill: README images can carry only one link each, so every button is its own SVG."""
-    size, h = 17, 56
-    text_w = MONO_MD.width(label, size)
-    w = 24 + text_w + 14 + 12 + 24
-    ink = C["bg"] if primary else C["ink_strong"]
-    svg = Svg(num(w), h, label)
-    svg.add(el("rect", x=0.5, y=0.5, width=num(w - 1), height=h - 1, rx=12, fill=C["primary"] if primary else C["surface"], stroke=None if primary else LINE_STRONG))
-    svg.text(24, num(h / 2 + size * 0.36), label, MONO_MD, size, ink)
-    ax, ay = 24 + text_w + 14, h / 2 - 6
-    svg.add(el("path", d=f"M{num(ax)} {num(ay + 12)}L{num(ax + 12)} {num(ay)}M{num(ax + 3)} {num(ay)}H{num(ax + 12)}V{num(ay + 9)}", fill="none", stroke=ink, stroke_width=2, stroke_linecap="round", stroke_linejoin="round"))
+        rich_text(svg, pad, first + i * leading, line, size, c)
+    svg.text(pad, stack_y, t["stack"], BODY, 16, c["muted"])
     return svg
 
 
@@ -675,18 +474,19 @@ def main():
     LIVE.write_text(json.dumps(live, ensure_ascii=False, indent=2) + "\n")
     outputs = {}
     for lang in LANGS:
-        outputs[f"hero.{lang}.svg"] = hero(lang, live)
-        outputs[f"about.{lang}.svg"] = about(lang)
-        outputs[f"stack.{lang}.svg"] = stack(lang)
-        for index, project in enumerate(PROJECTS, start=1):
-            outputs[f"card-{project['slug']}.{lang}.svg"] = card(project, index, lang, live)
-        outputs[f"contact.{lang}.svg"] = contact(lang)
-        for key, label in CONTENT[lang]["buttons"].items():
-            outputs[f"button-{key}.{lang}.svg"] = button(label, primary=key == "resume")
+        for theme in THEMES:
+            outputs[f"hero.{lang}.{theme}.svg"] = hero(lang, theme, live)
+            for index, project in enumerate(PROJECTS, start=1):
+                outputs[f"work-{project['slug']}.{lang}.{theme}.svg"] = work_row(project, index, lang, theme)
+            outputs[f"footer.{lang}.{theme}.svg"] = footer(lang, theme)
+    # Drop blocks that are no longer generated, so the folder always matches the README.
+    for stale in OUT.glob("*.svg"):
+        if stale.name not in outputs:
+            stale.unlink()
     for name, svg in outputs.items():
         path = OUT / name
         path.write_text(svg.render())
-        print(f"{name:28} {path.stat().st_size / 1024:6.1f} KB")
+        print(f"{name:36} {path.stat().st_size / 1024:6.1f} KB")
 
 
 if __name__ == "__main__":
