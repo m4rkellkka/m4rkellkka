@@ -33,6 +33,7 @@ CONTENT = {
     "en": {
         "name": "Mikhail Savushkin",
         "place": "Istanbul",
+        "caption": "Istanbul, 2026",
         # (text, is_accent): the accent run stays on one line, set in italic with a hand-drawn underline.
         "headline": [("I build the apps a clinic's teams use", False), ("instead of", True), ("WhatsApp threads.", False)],
         "path": "Data Scientist at Yandex in 2022–23, then a clinic's sales team, now its full-stack engineer.",
@@ -45,6 +46,7 @@ CONTENT = {
     "ru": {
         "name": "Михаил Савушкин",
         "place": "Стамбул",
+        "caption": "Стамбул, 2026",
         "headline": [("Делаю приложения, которыми команды клиники пользуются", False), ("вместо", True), ("тредов в WhatsApp.", False)],
         "path": "Data Scientist в Яндексе в 2022–23, потом продажи в клинике, теперь её full-stack разработчик.",
         "open": "Открыт к full-stack и AI-ролям",
@@ -59,6 +61,10 @@ CONTENT = {
 PROJECTS = [
     {
         "slug": "tamam",
+        "visual": {
+            "en": {"rows": [("#1042", "Control visit", "Waiting for manager", True), ("#1041", "Hotel change", "With coordinator", False), ("#1039", "Consultation", "Done", False)]},
+            "ru": {"rows": [("#1042", "Контроль", "Ждёт менеджера", True), ("#1041", "Смена отеля", "У координатора", False), ("#1039", "Консультация", "Выполнена", False)]},
+        },
         "repo": None,
         # Private repos are matched by id, so their names never appear in this public repo.
         "repo_id": 1387651029,
@@ -72,6 +78,10 @@ PROJECTS = [
     },
     {
         "slug": "cv-screening",
+        "visual": {
+            "en": {"criterion": "Sales experience", "score": "4 / 5", "quote": "“Two years selling to international clients”", "note": "Score computed in code · personal data removed"},
+            "ru": {"criterion": "Опыт продаж", "score": "4 / 5", "quote": "«Два года продаж иностранным клиентам»", "note": "Балл считает код · персональные данные убраны"},
+        },
         "repo": None,
         "repo_id": 1385646223,
         "title": "CV Screening",
@@ -84,6 +94,10 @@ PROJECTS = [
     },
     {
         "slug": "whatsapp-qa",
+        "visual": {
+            "en": {"chat": [("client", "Is this the final price?"), ("seller", "Yes")], "flag": "No next step offered: suggest a consultation"},
+            "ru": {"chat": [("client", "Это окончательная цена?"), ("seller", "Да")], "flag": "Нет следующего шага: предложить консультацию"},
+        },
         "repo": None,
         "title": "WhatsApp QA",
         "status": {"en": "in production", "ru": "в продакшене"},
@@ -95,6 +109,10 @@ PROJECTS = [
     },
     {
         "slug": "lumis",
+        "visual": {
+            "en": {"question": "What does spaced repetition optimise?", "hint": "Card 12 of 40 · written by a local LLM"},
+            "ru": {"question": "Что оптимизирует интервальное повторение?", "hint": "Карточка 12 из 40 · написана локальной LLM"},
+        },
         "repo": "Lumis",
         "title": "Lumis",
         "status": {"en": "side project", "ru": "пет-проект"},
@@ -128,25 +146,18 @@ def oklch(l, c, h):
 
 
 # Same tokens as the :root blocks in index.html, so the profile and the resume site share one palette.
-THEMES = {
-    "light": {
-        "paper": oklch(0.955, 0.012, 80),
-        "ink": oklch(0.23, 0.012, 60),
-        "soft": oklch(0.38, 0.012, 60),
-        "muted": oklch(0.5, 0.016, 65),
-        "accent": oklch(0.56, 0.155, 38),
-        "line": "rgba(43,36,29,0.16)",
-    },
-    # GitHub dark is #0d1117: the hero card is warm graphite, the transparent rows use light ink.
-    "dark": {
-        "paper": oklch(0.21, 0.008, 60),
-        "ink": oklch(0.93, 0.012, 80),
-        "soft": oklch(0.83, 0.012, 80),
-        "muted": oklch(0.76, 0.014, 72),
-        "accent": oklch(0.72, 0.135, 42),
-        "line": "rgba(240,233,222,0.16)",
-    },
+# One dark palette for both GitHub themes: near-black (not brown), warm ink, a single terracotta accent.
+C = {
+    "bg": oklch(0.16, 0.004, 60),
+    "raised": oklch(0.205, 0.006, 60),
+    "ink": oklch(0.94, 0.01, 80),
+    "soft": oklch(0.82, 0.012, 78),
+    "muted": oklch(0.66, 0.014, 72),
+    "accent": oklch(0.68, 0.155, 40),
+    "line": "rgba(255,255,255,0.09)",
+    "line_strong": "rgba(255,255,255,0.16)",
 }
+PHOTO = Path(__file__).resolve().parent / "profile" / "photo.jpg"
 
 
 class Face:
@@ -247,12 +258,6 @@ class Svg:
         return "\n".join(
             [head, el("title", escape(self.title)), el("style", style), el("defs", "".join(self.defs)), *self.body, "</svg>\n"]
         )
-
-
-def paper(svg, theme, radius=20):
-    """A flat sheet of warm paper with a hairline edge: no grid, grain or glow."""
-    c = THEMES[theme]
-    svg.add(el("rect", x=0.5, y=0.5, width=svg.width - 1, height=svg.height - 1, rx=radius, fill=c["paper"], stroke=c["line"]))
 
 
 def day_first(iso_date):
@@ -357,71 +362,168 @@ def scribble(svg, start, end, y, c):
     svg.add(el("path", d=d, pathLength=1, fill="none", stroke=c["accent"], stroke_width=2.6, stroke_linecap="round", class_="scribble"))
 
 
-def hero(lang, theme, live):
-    t, c = CONTENT[lang], THEMES[theme]
-    pad, right, size, leading = 64, 1136, 50, 60
-    lines = balanced_lines(t["headline"], size, right - pad)
-    first = 168
+def backdrop(svg, radius=18, glow=None):
+    """Flat near-black card, hairline edge, at most one soft terracotta glow. No grid, no grain."""
+    w, h = svg.width, svg.height
+    svg.defs.append(el("clipPath", el("rect", width=w, height=h, rx=radius), id="frame"))
+    layers = el("rect", width=w, height=h, fill=C["bg"])
+    if glow:
+        cx, cy, r = glow
+        svg.defs.append(
+            el(
+                "radialGradient",
+                el("stop", offset=0, stop_color=C["accent"], stop_opacity=0.08) + el("stop", offset=1, stop_color=C["accent"], stop_opacity=0),
+                id="glow", cx=cx, cy=cy, r=r,
+            )
+        )
+        layers += el("rect", width=w, height=h, fill="url(#glow)")
+    svg.add(el("g", layers, clip_path="url(#frame)"))
+    svg.add(el("rect", x=0.5, y=0.5, width=w - 1, height=h - 1, rx=radius - 0.5, fill="none", stroke=C["line_strong"]))
+
+
+def pill(svg, right, y, label, size, accent=False):
+    """Status pill anchored by its right edge; returns its left x."""
+    w = BODY.width(label, size) + 22
+    svg.add(el("rect", x=num(right - w), y=num(y - size - 2), width=num(w), height=num(size + 13), rx=num((size + 13) / 2),
+               fill=C["accent"] if accent else "#ffffff", fill_opacity=0.16 if accent else 0.06))
+    svg.text(num(right - 11), num(y + 1), label, BODY, size, C["accent"] if accent else C["soft"], text_anchor="end")
+    return right - w
+
+
+def hero(lang, live):
+    t = CONTENT[lang]
+    pad, size, leading = 64, 54, 64
+    text_right = 820
+    lines = balanced_lines(t["headline"], size, text_right - pad)
+    first = 176
     last = first + (len(lines) - 1) * leading
-    path_y = last + 62
-    rule_y = path_y + 40
+    path_lines = wrap(BODY, t["path"], 19, text_right - pad, 2)
+    path_y = last + 58
+    rule_y = max(path_y + (len(path_lines) - 1) * 28 + 44, 420)
     foot_y = rule_y + 42
     headline = " ".join(text for text, _ in t["headline"])
     svg = Svg(1200, foot_y + 38, f"{t['name']}. {headline}")
-    paper(svg, theme)
+    backdrop(svg, glow=(0.12, 0.0, 0.7))
+    svg.styles.append(
+        "@keyframes ping{0%{transform:scale(1);opacity:.7}80%,100%{transform:scale(2.6);opacity:0}}"
+        ".ping{transform-box:fill-box;transform-origin:center;animation:ping 2.4s cubic-bezier(0,0,.2,1) infinite}"
+        "@media (prefers-reduced-motion:reduce){.ping{animation:none;opacity:0}}"
+    )
 
-    svg.text(pad, 78, t["name"], SERIF, 24, c["ink"])
-    svg.text(right, 78, t["place"], BODY, 16, c["muted"], text_anchor="end")
+    svg.text(pad, 82, t["name"], SERIF, 24, C["ink"])
+    svg.text(pad + SERIF.width(t["name"], 24) + 14, 82, f"· {t['place']}", BODY, 16, C["muted"])
     for i, line in enumerate(lines):
         y = first + i * leading
-        accent = rich_text(svg, pad, y, line, size, c)
+        accent = rich_text(svg, pad, y, line, size, C)
         if accent:
-            scribble(svg, accent[0] - 2, accent[1] + 2, y + 13, c)
-    for i, line in enumerate(wrap(BODY, t["path"], 19, right - pad, 2)):
-        svg.text(pad, path_y + i * 28, line, BODY, 19, c["soft"])
+            scribble(svg, accent[0] - 2, accent[1] + 2, y + 13, C)
+    for i, line in enumerate(path_lines):
+        svg.text(pad, path_y + i * 28, line, BODY, 19, C["soft"])
 
-    svg.add(el("path", d=f"M{pad} {rule_y}H{right}", stroke=c["line"]))
-    svg.text(pad, foot_y, t["open"], BODY, 15, c["muted"])
+    # The photo as a print, tilted, like on the resume site.
+    fx, fy, fw, fh = 900, 58, 236, 336
+    photo = base64.b64encode(PHOTO.read_bytes()).decode()
+    svg.defs.append(el("filter", el("feDropShadow", dx=0, dy=14, stdDeviation=14, flood_color="#000", flood_opacity=0.5), id="lift", x="-30%", y="-30%", width="160%", height="160%"))
+    print_ = (
+        el("rect", x=fx, y=fy, width=fw, height=fh, fill="#f6f2ea", filter="url(#lift)")
+        + el("image", x=fx + 10, y=fy + 10, width=fw - 20, height=num((fw - 20) * 4 / 3), href=f"data:image/jpeg;base64,{photo}", preserveAspectRatio="xMidYMid slice")
+    )
+    svg.add(el("g", print_, transform=f"rotate(3 {fx + fw / 2} {fy + fh / 2})"))
+    svg.text(num(fx + fw / 2), fy + fh - 16, t["caption"], SERIF_IT, 17, "#5a534b", text_anchor="middle", transform=f"rotate(3 {fx + fw / 2} {fy + fh / 2})")
+
+    svg.add(el("path", d=f"M{pad} {rule_y}H1136", stroke=C["line"]))
+    svg.text(pad, foot_y, t["open"], BODY, 15, C["muted"])
     latest = live["latest"]
     title = latest["title"] or t["private_repo"]
-    status = [(f"{t['last_push']} → ", c["muted"]), (title, c["ink"]), (f" · {day_first(latest['pushed'])}", c["muted"])]
+    status = [(f"{t['last_push']} → ", C["muted"]), (title, C["ink"]), (f" · {day_first(latest['pushed'])}", C["muted"])]
     width = sum(BODY.width(part, 15) for part, _ in status)
-    svg.add(el("circle", cx=num(right - width - 12), cy=foot_y - 5, r=3.5, fill=c["accent"]))
-    svg.text(right, foot_y, status, BODY, 15, text_anchor="end")
+    dot_x = 1136 - width - 14
+    svg.add(el("circle", cx=num(dot_x), cy=foot_y - 5, r=4, fill=C["accent"], class_="ping"), el("circle", cx=num(dot_x), cy=foot_y - 5, r=4, fill=C["accent"]))
+    svg.text(1136, foot_y, status, BODY, 15, text_anchor="end")
     return svg
 
 
-def work_row(project, index, lang, theme):
-    """One line of the work list. Transparent, so consecutive rows read as one table of contents."""
-    c = THEMES[theme]
-    pad, right, h = 64, 1136, 116
-    svg = Svg(1200, h, f"{project['title']} — {project['desc'][lang]} ({project['status'][lang]})")
-    svg.text(pad, 66, f"0{index}", SERIF_IT, 30, c["accent"])
-    svg.text(pad + 62, 60, project["title"], SERIF, 32, c["ink"])
+def visual_tamam(svg, x, y, w, v):
+    for i, (rid, kind, status, waiting) in enumerate(v["rows"]):
+        ry = y + 36 + i * 44
+        if i:
+            svg.add(el("path", d=f"M{x + 16} {ry - 29}H{x + w - 16}", stroke=C["line"]))
+        svg.text(x + 16, ry, rid, BODY, 15, C["muted"])
+        svg.text(x + 76, ry, kind, BODY, 17, C["ink"])
+        pill(svg, x + w - 16, ry, status, 14, accent=waiting)
+
+
+def visual_cv(svg, x, y, w, v):
+    svg.text(x + 18, y + 34, v["criterion"], BODY, 17, C["ink"])
+    svg.text(x + w - 18, y + 34, v["score"], BODY, 17, C["accent"], text_anchor="end")
+    bar_w = w - 36
+    svg.add(
+        el("rect", x=x + 18, y=y + 48, width=bar_w, height=6, rx=3, fill="#ffffff", fill_opacity=0.08),
+        el("rect", x=x + 18, y=y + 48, width=num(bar_w * 0.8), height=6, rx=3, fill=C["accent"]),
+        el("path", d=f"M{x + 18} {y + 76}V{y + 104}", stroke=C["accent"], stroke_width=2),
+    )
+    svg.text(x + 30, y + 96, v["quote"], SERIF_IT, num(fit(SERIF_IT, v["quote"], 18, w - 48)), C["soft"])
+    svg.text(x + 18, y + 128, v["note"], BODY, 14, C["muted"])
+
+
+def visual_qa(svg, x, y, w, v):
+    (who1, msg1), (who2, msg2) = v["chat"]
+    b1 = BODY.width(msg1, 16) + 28
+    svg.add(el("rect", x=x + 16, y=y + 14, width=num(b1), height=34, rx=14, fill="#ffffff", fill_opacity=0.07))
+    svg.text(x + 30, y + 36, msg1, BODY, 16, C["soft"])
+    b2 = BODY.width(msg2, 16) + 28
+    svg.add(el("rect", x=num(x + w - 16 - b2), y=y + 56, width=num(b2), height=34, rx=14, fill=C["accent"], fill_opacity=0.18))
+    svg.text(num(x + w - 30), y + 78, msg2, BODY, 16, C["ink"], text_anchor="end")
+    svg.add(el("circle", cx=x + 22, cy=y + 117, r=4, fill=C["accent"]))
+    svg.text(x + 34, y + 122, v["flag"], BODY, 15, C["accent"])
+
+
+def visual_lumis(svg, x, y, w, v):
+    svg.add(
+        el("rect", x=x + 26, y=y + 22, width=w - 52, height=78, rx=10, fill="#ffffff", fill_opacity=0.04, stroke=C["line"], transform=f"rotate(-2 {x + w / 2} {y + 61})"),
+        el("rect", x=x + 18, y=y + 16, width=w - 36, height=82, rx=10, fill=C["raised"], stroke=C["line_strong"]),
+    )
+    svg.text(x + 34, y + 50, v["question"], SERIF, num(fit(SERIF, v["question"], 18, w - 68)), C["ink"])
+    svg.text(x + 34, y + 80, v["hint"], BODY, 14, C["muted"])
+    track = w - 36
+    svg.add(
+        el("rect", x=x + 18, y=y + 116, width=track, height=6, rx=3, fill="#ffffff", fill_opacity=0.08),
+        el("rect", x=x + 18, y=y + 116, width=num(track * 0.3), height=6, rx=3, fill=C["accent"]),
+    )
+
+
+VISUALS = {"tamam": visual_tamam, "cv-screening": visual_cv, "whatsapp-qa": visual_qa, "lumis": visual_lumis}
+
+
+def card(project, index, lang):
+    w, h, pad = 600, 388, 34
+    svg = Svg(w, h, f"{project['title']} — {project['desc'][lang]} ({project['status'][lang]})")
+    backdrop(svg, 16)
+    svg.text(pad, 60, f"0{index}", SERIF_IT, 28, C["accent"])
     status = project["status"][lang]
-    status_x = right - 26
-    svg.text(num(status_x), 60, status, BODY, 15, c["muted"], text_anchor="end")
-    dot_x = status_x - BODY.width(status, 15) - 12
-    svg.add(el("circle", cx=num(dot_x), cy=55, r=3.5, fill=c["accent"] if project["live"] else c["line"]))
-    ax, ay = right - 12, 48
-    svg.add(el("path", d=f"M{ax} {ay + 12}L{ax + 12} {ay}M{ax + 3} {ay}H{ax + 12}V{ay + 9}", fill="none", stroke=c["muted"], stroke_width=1.6, stroke_linecap="round", stroke_linejoin="round"))
-    desc = project["desc"][lang]
-    svg.text(pad + 62, 92, desc, BODY, num(fit(BODY, desc, 18, right - pad - 62)), c["soft"])
-    svg.add(el("path", d=f"M{pad} {h - 0.5}H{right}", stroke=c["line"]))
+    svg.text(w - pad, 56, status, BODY, 15, C["muted"], text_anchor="end")
+    svg.add(el("circle", cx=num(w - pad - BODY.width(status, 15) - 12), cy=51, r=4, fill=C["accent"] if project["live"] else C["line_strong"]))
+    svg.text(pad, 106, project["title"], SERIF, num(fit(SERIF, project["title"], 34, w - 2 * pad)), C["ink"])
+    for i, line in enumerate(wrap(BODY, project["desc"][lang], 18, w - 2 * pad, 2)):
+        svg.text(pad, 142 + i * 26, line, BODY, 18, C["soft"])
+    bx, by, bw, bh = pad, 206, w - 2 * pad, 148
+    svg.add(el("rect", x=bx, y=by, width=bw, height=bh, rx=12, fill=C["raised"], stroke=C["line"]))
+    VISUALS[project["slug"]](svg, bx, by, bw, project["visual"][lang])
     return svg
 
 
-def footer(lang, theme):
-    t, c = CONTENT[lang], THEMES[theme]
+def footer(lang):
+    t = CONTENT[lang]
     pad, right, size, leading = 64, 1136, 34, 44
     lines = balanced_lines(t["invite"], size, right - pad)
-    first = 70
-    stack_y = first + (len(lines) - 1) * leading + 46
+    first = 82
+    stack_y = first + (len(lines) - 1) * leading + 50
     invite = " ".join(text for text, _ in t["invite"])
-    svg = Svg(1200, stack_y + 30, f"{invite} {t['stack']}")
+    svg = Svg(1200, stack_y + 46, f"{invite} {t['stack']}")
+    backdrop(svg, glow=(0.9, 1.0, 0.7))
     for i, line in enumerate(lines):
-        rich_text(svg, pad, first + i * leading, line, size, c)
-    svg.text(pad, stack_y, t["stack"], BODY, 16, c["muted"])
+        accent = rich_text(svg, pad, first + i * leading, line, size, C)
+    svg.text(pad, stack_y, t["stack"], BODY, 16, C["muted"])
     return svg
 
 
@@ -474,11 +576,10 @@ def main():
     LIVE.write_text(json.dumps(live, ensure_ascii=False, indent=2) + "\n")
     outputs = {}
     for lang in LANGS:
-        for theme in THEMES:
-            outputs[f"hero.{lang}.{theme}.svg"] = hero(lang, theme, live)
-            for index, project in enumerate(PROJECTS, start=1):
-                outputs[f"work-{project['slug']}.{lang}.{theme}.svg"] = work_row(project, index, lang, theme)
-            outputs[f"footer.{lang}.{theme}.svg"] = footer(lang, theme)
+        outputs[f"hero.{lang}.svg"] = hero(lang, live)
+        for index, project in enumerate(PROJECTS, start=1):
+            outputs[f"card-{project['slug']}.{lang}.svg"] = card(project, index, lang)
+        outputs[f"footer.{lang}.svg"] = footer(lang)
     # Drop blocks that are no longer generated, so the folder always matches the README.
     for stale in OUT.glob("*.svg"):
         if stale.name not in outputs:
@@ -486,7 +587,7 @@ def main():
     for name, svg in outputs.items():
         path = OUT / name
         path.write_text(svg.render())
-        print(f"{name:36} {path.stat().st_size / 1024:6.1f} KB")
+        print(f"{name:32} {path.stat().st_size / 1024:6.1f} KB")
 
 
 if __name__ == "__main__":
