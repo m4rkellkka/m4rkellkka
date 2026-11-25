@@ -1,7 +1,7 @@
 {
   "latest": {
-    "title": "Tamam",
-    "pushed": "2026-11-23"
+    "title": null,
+    "pushed": "2026-11-25"
   },
   "repos": {
     "amber.": {
@@ -13,6 +13,11 @@
       "language": "Jupyter Notebook",
       "stars": 0,
       "pushed": "2026-05-14"
+    },
+    "fee308-hotel-cancellations": {
+      "language": "Jupyter Notebook",
+      "stars": 0,
+      "pushed": "2026-11-25"
     },
     "Lumis": {
       "language": "TypeScript",
